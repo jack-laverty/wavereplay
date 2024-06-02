@@ -1,0 +1,36 @@
+/* these three includes are essential for tailwind as they import tailwind's core styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --logo: #ffffff;
+  --foreground: #e0e7ff;
+  --background: #1e293b;
+  --background-dark: #0f172a;
+  --background-light: #3f4555;
+  --button: #006fee;
+  --font: 'Manrope'
+}
+
+header {
+  color: black;
+  background: white;
+  font-family: var(--font);
+}
+
+body {
+  color: black;
+  background: white;
+  font-family: var(--font);
+}
+
+.video-header {
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.svg-filter {
+  filter: invert(1);
+}

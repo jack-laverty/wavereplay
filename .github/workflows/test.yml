@@ -1,0 +1,29 @@
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs at midnight every night
+  push:
+    branches:
+      - '*' # wildcard for every commit to any branch
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+        DISABLE_DB_CONNECTION: 1
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4 # Updated to v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4 # Updated to v4
+      with:
+        node-version: 'lts/*' # Uses the latest LTS version of Node.js
+
+    - name: Install dependencies
+      run: npm ci # Uses clean install instead of npm install
+
+    - name: Build the project
+      run: npm run build
