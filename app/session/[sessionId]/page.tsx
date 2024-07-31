@@ -3,7 +3,6 @@ import React from 'react';
 import SessionHeader from "./components/SessionHeader";
 import VideoHeader from './components/VideoHeader';
 import VideoPlayer from './components/VideoPlayer';
-import VideoPlayerControls from './components/VideoPlayerControls';
 import VideoList from './components/VideoList';
 import { Session, Video } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
@@ -57,7 +56,7 @@ export default async function SessionPage({ params }: { params: { sessionId: str
           <div className="flex flex-col">
             <VideoHeader session={session} />
             <VideoPlayer videoId={'Intermediate/2024-05-15_20-00-00-landscape.mp4'} />
-            <VideoPlayerControls />
+            {/* <VideoPlayerControls /> */}
           </div>
           <VideoList videos={videos}/>
         </div>
