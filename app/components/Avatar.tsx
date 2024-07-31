@@ -1,13 +1,22 @@
 
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+
 export default async function Avatar() {
-  return null
-  const imageUrl =  null
-  if (!imageUrl)
-    return null;
-  return <img 
-    src={imageUrl} 
-    alt="User Avatar" 
-    className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 md:border-4" 
-    style={{ borderColor: '#d3d3d3' }} 
-  />
+
+  const supabase = createClient()
+
+  const { data, error } = await supabase.auth.getUser()
+  if (error || !data?.user) {
+    redirect('/login')
+  }
+
+  return (
+    <img 
+      src={data.user.user_metadata.avatar_url} 
+      alt="User Avatar" 
+      className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2" 
+      style={{ borderColor: '#d3d3d3' }} 
+    />
+  )
 }
