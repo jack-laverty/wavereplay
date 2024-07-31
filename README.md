@@ -64,3 +64,5 @@ In GitHub OAuth app settings, ensure the `Authorization callback URL` is set to 
 In Supabase, under Authentication > URL Configuration:
 * Site URL should be the web apps base URL (e.g., http://localhost:3000 for local development)
 * Redirect URLs should include http://localhost:3000/auth/callback for local development and your production callback URL.
+
+[Servers-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)

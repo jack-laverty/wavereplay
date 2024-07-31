@@ -1,11 +1,11 @@
 
 import React from 'react';
 import SessionHeader from "./components/SessionHeader";
-import { Video, Session } from '@/lib/types'
-import VideoList from './components/VideoList';
 import VideoHeader from './components/VideoHeader';
 import VideoPlayer from './components/VideoPlayer';
 import VideoPlayerControls from './components/VideoPlayerControls';
+import VideoList from './components/VideoList';
+import { Session, Video } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
 
 const videos: Video[] = [
@@ -25,9 +25,8 @@ const videos: Video[] = [
   }
 ];
 
-const supabase = createClient();
-
 async function getSession(id: string): Promise<Session | null> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from('sessions')
     .select('*')
