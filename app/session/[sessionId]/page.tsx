@@ -11,14 +11,12 @@ const videos: Video[] = [
   {
     id: 1,
     title: 'Video Title 1',
-    thumbnailUrl: '/thumbnails/video1.jpg',
     videoUrl: '',
     timestamp: '8:00AM'
   },
   {
     id: 2,
     title: 'Video Title 2',
-    thumbnailUrl: '/thumbnails/video2.jpg',
     videoUrl: '',
     timestamp: '8:30AM'
   }
@@ -56,7 +54,6 @@ export default async function SessionPage({ params }: { params: { sessionId: str
           <div className="flex flex-col">
             <VideoHeader session={session} />
             <VideoPlayer videoId={'Intermediate/2024-05-15_20-00-00-landscape.mp4'} />
-            {/* <VideoPlayerControls /> */}
           </div>
           <VideoList videos={videos}/>
         </div>

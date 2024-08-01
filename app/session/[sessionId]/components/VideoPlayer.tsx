@@ -143,7 +143,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId }) => {
                 value={playbackRate}
                 onChange={handlePlaybackRateChange}
               />
-              <div className="text-sm text-white w-4 text-right">{playbackRate.toFixed(1)}x</div>
+              <div className="text-sm text-white w-6 text-right">{playbackRate.toFixed(1)}x</div>
               <img src="/timer.svg" alt="playback-rate" className="w-6 h-6 svg-filter" />
             </div>
           </div>

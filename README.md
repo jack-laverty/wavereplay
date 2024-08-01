@@ -44,6 +44,10 @@ Supabase database is used for all data except for the video files.
 
 Supabase is a one stop shop database for this application because it comes configurable with services for authentication, storage, and realtime data. It's used to store user data for authentication, surf session information, and video metadata for all the individual clips in a session.
 
+Sessions are stored in a sessions table that contain a unique session ID. Clips are stored in a clips table that use a foreign key to link groups of clips to a particular session.
+
+There's a single access policy that only gives access to my user ID.
+
 
 ### [MinIO](https://github.com/minio/minio)
 
