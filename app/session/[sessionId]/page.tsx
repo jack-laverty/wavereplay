@@ -53,7 +53,7 @@ export default async function SessionPage({ params }: { params: { sessionId: str
         <div className="md:mx-auto bg-white md:p-6 rounded-xl">
           <div className="flex flex-col">
             <VideoHeader session={session} />
-            <VideoPlayer videoId={'Intermediate/2024-05-15_20-00-00-landscape.mp4'} />
+            <VideoPlayer videoId={'surfing/2024-05-15_20-03-49-landscape.mp4'} />
           </div>
           <VideoList videos={videos}/>
         </div>
