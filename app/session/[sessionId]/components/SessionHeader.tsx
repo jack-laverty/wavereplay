@@ -1,14 +1,12 @@
 import React from 'react';
 import BackButton from './BackButton';
 import { Session } from '@/lib/types'
-import dayjs from 'dayjs';
+import { formatDateTime } from '@/lib/utils'
 
 
 const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
 
-  const dateTime = dayjs(`${session.date} ${session.time}`);
-  const formattedDate = dateTime.format('D MMM YYYY');
-  const formattedTime = dateTime.format('h:mma');
+  const [formattedDate, formattedTime] = formatDateTime(session.date, session.time);
   
   return (
     <div className="flex items-center justify-between px-2 pb-2 bg-white">
