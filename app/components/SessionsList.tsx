@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Session } from '@/lib/types'
+import { formatTime, formatDate } from '@/lib/utils'
 
 interface SessionsListProps {
   sessions: Session[];
@@ -40,8 +41,8 @@ const SessionsList: React.FC<SessionsListProps> = ({ sessions }) => {
                 className="border-t border-gray-300 hover:bg-gray-50 cursor-pointer"
                 onClick={() => handleRowClick(session.session_id)}
                 >
-                <td className="px-4 py-2">{session.date}</td>
-                <td className="px-4 py-2">{session.time}</td>
+                <td className="px-4 py-2">{formatDate(session.date)}</td>
+                <td className="px-4 py-2">{formatTime(session.time)}</td>
                 <td className="px-4 py-2">{session.location}</td>
                 <td className="px-4 py-2">{session.wave}</td>
                 <td className="px-4 py-2">{session.surfer}</td>

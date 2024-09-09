@@ -20,3 +20,9 @@ export const formatTime = (time: string): string => {
   const formattedTime = dateTime.format('h:mma');
   return formattedTime
 }
+
+export const formatDate = (date: string): string => {
+  const dateTime = dayjs(`${date} 00:00:00`);
+  const formattedDate = dateTime.format('D MMM YYYY');
+  return formattedDate
+}

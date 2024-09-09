@@ -7,16 +7,14 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { videoId: string } }
 ) {
-  
   try {
-
     const { data, error } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET!)
       .download("surfing/" + params.videoId);
 
     if (error) {
-        console.error('Catch all Error streaming video:', error);
-        return NextResponse.json({ error: 'Error streaming video' }, { status: 500 });
+      console.error('Error streaming video:', error);
+      return NextResponse.json({ error: 'Error streaming video' }, { status: 500 });
     }
     
     if (!data) {
@@ -26,13 +24,15 @@ export async function GET(
 
     const range = request.headers.get('range');
 
+    let response: NextResponse;
+
     if (range) {
       const parts = range.replace(/bytes=/, "").split("-");
       const start = parseInt(parts[0], 10);
       const end = parts[1] ? parseInt(parts[1], 10) : data.size - 1;
       const chunkSize = (end - start) + 1;
 
-      return new NextResponse(data.slice(start, end + 1), {
+      response = new NextResponse(data.slice(start, end + 1), {
         status: 206,
         headers: {
           'Content-Range': `bytes ${start}-${end}/${data.size}`,
@@ -42,7 +42,7 @@ export async function GET(
         },
       });
     } else {
-      return new NextResponse(data, {
+      response = new NextResponse(data, {
         status: 200,
         headers: {
           'Content-Length': data.size.toString(),
@@ -50,6 +50,12 @@ export async function GET(
         },
       });
     }
+
+    // Add caching headers
+    response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400');
+    response.headers.set('ETag', `"${params.videoId}"`);
+
+    return response;
   } catch (error) {
     console.error('Catch all Error streaming video:', error);
     return NextResponse.json({ error: 'Error streaming video', details: error }, { status: 500 });
