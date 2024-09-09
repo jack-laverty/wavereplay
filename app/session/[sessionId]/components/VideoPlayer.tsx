@@ -3,10 +3,10 @@
 import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
 
 interface VideoPlayerProps {
-  videoId: string;
+  title: string;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -16,11 +16,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId }) => {
 
   useEffect(() => {
     if (videoRef.current) {
-      const encodedVideoId = encodeURIComponent(videoId);
-      videoRef.current.src = `/api/videos/${encodedVideoId}`;
+      videoRef.current.src = `/api/videos/${title}`;
       videoRef.current.preload = 'auto'; // Preload the entire video
     }
-  }, [videoId]);
+  }, [title]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -44,20 +44,19 @@ Supabase database is used for all data except for the video files.
 
 Supabase is a one stop shop database for this application because it comes configurable with services for authentication, storage, and realtime data. It's used to store user data for authentication, surf session information, and video metadata for all the individual clips in a session.
 
-Sessions are stored in a sessions table that contain a unique session ID. Clips are stored in a clips table that use a foreign key to link groups of clips to a particular session.
 
-There's a single access policy that only gives access to my user ID.
+#### [Supabase Database](https://supabase.com/docs/guides/database/overview)
+Sessions are stored in a sessions table that contain a unique session ID. Clips are stored in a clips table that use a foreign key to link groups of clips to a particular session. Row Level Security (RLS) is enabled for both. During development each database has one policy that only gives access to my user ID.
 
+#### [Supabase Storage](https://supabase.com/docs/guides/storageo)
 
-### [MinIO](https://github.com/minio/minio)
+A Supabase Storage Server is used for video file storage. It's S3 API compatible.
 
-A MinIO server is used for video file storage because it's S3 API compatible and runs on everything. The server is a self hosted docker container.
-
-### [Vault](https://www.hashicorp.com/products/vault)
+#### [Vault](https://www.hashicorp.com/products/vault)
 
 Secrets are locked in here.
 
-### [Supabase Auth](https://authjs.dev/getting-started/authentication/oauth)
+#### [Supabase Auth](https://authjs.dev/getting-started/authentication/oauth)
 
 Supabase Auth is used for authentication. GitHub provides a free OAuth service as the app is registered in the GitHub developer dashboard. Supabase provides [configuration docs](https://supabase.com/docs/guides/auth/social-login/auth-github) for this use case. Unauthenticated users are redirected to the login page via middleware.
 

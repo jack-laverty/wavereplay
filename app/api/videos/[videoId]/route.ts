@@ -9,10 +9,11 @@ export async function GET(
 ) {
   
   try {
+
     const { data, error } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET!)
-      .download(params.videoId);
-    
+      .download("surfing/" + params.videoId);
+
     if (error) {
         console.error('Catch all Error streaming video:', error);
         return NextResponse.json({ error: 'Error streaming video' }, { status: 500 });
