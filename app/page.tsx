@@ -1,4 +1,5 @@
 import SessionsData from "./components/SessionsData";
+import AddSessionButton from "./components/AddSessionButton";
 
 export default function Home() {
   return (

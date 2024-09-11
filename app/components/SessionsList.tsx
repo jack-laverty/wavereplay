@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Session } from '@/lib/types'
 import { formatTime, formatDate } from '@/lib/utils'
 
+import AddSessionButton from './AddSessionButton'
+
 interface SessionsListProps {
   sessions: Session[];
 }
@@ -20,7 +22,7 @@ const SessionsList: React.FC<SessionsListProps> = ({ sessions }) => {
       <div className="overflow-x-auto rounded-lg border border-gray-300 text-xs md:text-sm">
         
         {/* desktop */}
-        <table className="hidden md:table min-w-full bg-white">
+        <table className="hidden md:table w-full bg-white">
           <thead>
             <tr className="bg-gray-100">
               <th className="px-4 py-2 text-left">Date</th>
@@ -37,10 +39,10 @@ const SessionsList: React.FC<SessionsListProps> = ({ sessions }) => {
           <tbody>
             {sessions.map((session) => (
               <tr 
-              key={session.session_id} 
-                className="border-t border-gray-300 hover:bg-gray-50 cursor-pointer"
+                key={session.session_id} 
+                className="border-t border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
                 onClick={() => handleRowClick(session.session_id)}
-                >
+              >
                 <td className="px-4 py-2">{formatDate(session.date)}</td>
                 <td className="px-4 py-2">{formatTime(session.time)}</td>
                 <td className="px-4 py-2">{session.location}</td>
@@ -53,6 +55,13 @@ const SessionsList: React.FC<SessionsListProps> = ({ sessions }) => {
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={9} className="p-0">
+                <AddSessionButton />
+              </td>
+            </tr>
+          </tfoot>
         </table>
 
         {/* mobile */}
