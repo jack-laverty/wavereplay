@@ -84,7 +84,7 @@ const MultiVideoUpload: React.FC = () => {
         {isDragActive ? (
           <p>Drop the video files here ...</p>
         ) : (
-          <p>Drag 'n' drop some video files here, or click to select files</p>
+          <p>Drag and drop some video files here, or click to select files</p>
         )}
       </div>
       

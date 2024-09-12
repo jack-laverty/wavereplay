@@ -16,7 +16,8 @@ const AddSessionButton: React.FC = () => {
       className="w-full py-2 border-t border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors duration-200 flex justify-center items-center"
     >
       <img
-        src={"plus-symbol.svg"} 
+        src={"plus-symbol.svg"}
+        alt='Add Session Icon'
         className="w-6 h-6"
       />
     </button>
