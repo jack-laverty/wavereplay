@@ -53,6 +53,7 @@ export default async function SessionPage({ params }: { params: { sessionId: str
   return (
     <div className='session-page'>
       <SessionHeader session={session}/>
+      {/* <Link href={`/session/form/${sessionId}`}>Modify Session</Link> */}
       <div className="flex flex-col justify-between py-4 bg-gray-100">
         <VideoWrapper clips={clips} session={session}/>
       </div>

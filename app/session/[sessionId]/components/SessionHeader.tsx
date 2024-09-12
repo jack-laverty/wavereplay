@@ -51,16 +51,12 @@ const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
 
       <div className="hidden md:flex justify-end space-x-8 pr-4">
         <button className="flex flex-col items-center justify-center">
-          <img src="/locked.svg" alt="Unlocked" className="w-8 h-8" />
-          <span className="text-sm">public</span>
+          <img src="/settings.svg" alt="Modify Icon" className="w-8 h-8" />
+          <span className="text-sm">modify</span>
         </button>
         <button className="flex flex-col items-center justify-center">
-          <img src="/download.svg" alt="Download Icon" className="w-8 h-8" />
-          <span className="text-sm">download</span>
-        </button>
-        <button className="flex flex-col items-center justify-center">
-          <img src="/share.svg" alt="Unlocked" className="w-8 h-8" />
-          <span className="text-sm">share</span>
+          <img src="/delete3.svg" alt="Delete Icon" className="w-8 h-8" />
+          <span className="text-sm">delete</span>
         </button>
       </div>
     </div>

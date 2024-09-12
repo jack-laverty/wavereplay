@@ -7,7 +7,7 @@ const AddSessionButton: React.FC = () => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push('/session-upload');
+    router.push('/session/form/new');
   };
 
   return (
