@@ -69,3 +69,20 @@ In Supabase, under Authentication > URL Configuration:
 * Redirect URLs should include http://localhost:3000/auth/callback for local development and your production callback URL.
 
 [Servers-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)
+
+### User Input
+
+The app allows users to update the database with their own sessions via a new session form.
+
+#### Client Side:
+
+* React Hook Form
+* Zod
+* DOMPurify
+* Fetch
+
+#### Server Side:
+
+* Formidable
+* Zod
+* Next.js Route Handlers

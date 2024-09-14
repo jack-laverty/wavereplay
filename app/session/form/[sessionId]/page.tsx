@@ -6,11 +6,29 @@ import { Session } from '@/lib/types';
 import MultiVideoUpload from './components/MultiVideoUpload';
 import BackButton from './components/BackButton';
 
+import { useForm, SubmitHandler } from "react-hook-form"
+
+type Inputs = {
+  date: string
+  time: string
+  location: string
+  wave: string
+  board: string
+}
+
 const SessionForm: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const sessionId = params?.sessionId as string;
   const [sessionData, setSessionData] = useState<Partial<Session>>({});
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>()
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
 
   useEffect(() => {
     if (sessionId && sessionId !== 'new') {
@@ -21,100 +39,55 @@ const SessionForm: React.FC = () => {
     }
   }, [sessionId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (sessionId === 'new') {
-      // Create new session
-      await createSession(sessionData);
-    } else {
-      // Update existing session
-      await updateSession(sessionId, sessionData);
-    }
-    router.push('/dashboard');
-  };
+  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
 
   return (
     <div className="bg-gray-100 flex items-center justify-center py-6 sm:px-6 lg:px-8 text-sm">
-      <div className="max-w-md w-full">
-        <form className="bg-white shadow-md rounded-xl px-8 pt-6 pb-8 mb-4 space-y-6" onSubmit={handleSubmit}>
-          <BackButton/>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-                Date
-              </label>
-              <input
-                id="date"
-                type="date"
-                value={sessionData.date || ''}
-                onChange={(e) => setSessionData({ ...sessionData, date: e.target.value })}
-                className="form-input"
+      <div className="max-w-xs">
+        <BackButton/>
+        <form className=" bg-white shadow-md rounded-xl p-6 mb-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid grid-cols-[1fr_2fr] gap-4 items-center pb-4">
+            <label>Date</label>
+            <input className={`form-input border px-2 rounded-md ${errors.date ? 'border-purple-500 border-2' : 'border-gray-300'}`}
+              type="date"
+              id="date"
+              {...register("date", {
+                required: "This field is required",
+                validate: (value) => value <= today || "Date cannot be in the future",
+              })}
+              max={today} // Set the maximum allowed date to today
               />
-            </div>
-
-            <div>
-              <label htmlFor="time" className="block text-sm font-medium text-gray-700">
-                Time
-              </label>
-              <input
-                id="time"
-                type="time"
-                value={sessionData.time || ''}
-                onChange={(e) => setSessionData({ ...sessionData, time: e.target.value })}
-                className="form-input"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                Location
-              </label>
-              <input
-                id="location"
-                type="text"
-                value={sessionData.location || ''}
-                onChange={(e) => setSessionData({ ...sessionData, location: e.target.value })}
-                className="form-input"
-              />
-            </div>
             
-            <div>
-              <label htmlFor="wave" className="block text-sm font-medium text-gray-700">
-                Wave
-              </label>
-              <input
-                id="wave"
-                type="text"
-                value={sessionData.wave || ''}
-                onChange={(e) => setSessionData({ ...sessionData, wave: e.target.value })}
-                className="form-input"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="board" className="block text-sm font-medium text-gray-700">
-                Board
-              </label>
-              <input
-                id="board"
-                type="text"
-                value={sessionData.board || ''}
-                onChange={(e) => setSessionData({ ...sessionData, board: e.target.value })}
-                className="form-input"
-              />
-            </div>
+            <label>Time</label>
+            <input className={`form-input border px-2 rounded-md ${errors.time ? 'border-purple-500 border-2' : 'border-gray-300'}`} type="time" {...register("time", { required: true })} />
             
-            {/* Add other form fields as needed */}
+            <label className="block text-sm font-medium text-gray-700">Location</label>
+            <select className={`form-input border px-2 rounded-md ${errors.location ? 'border-purple-500 border-2' : 'border-gray-300'}`} {...register("location", { required: true })}>
+              <option value="URBNSURF Sydney">URBNSURF Sydney</option>
+              <option value="URBNSURF Melbourne">URBNSURF Melbourne</option>
+              <option value="Waco Surf">Waco Surf</option>
+              <option value="Fireside Surf">Fireside Surf</option>
+              <option value="O2 Surftown MUC">O2 Surftown MUC</option>
+              <option value="Revel Surf AZ">Revel Surf AZ</option>
+              <option value="Parkwood Village">Parkwood Village</option>
+            </select>
+            
+            <label className="block text-sm font-medium text-gray-700">Wave</label>
+            <input className={`form-input border px-2 rounded-md ${errors.wave ? 'border-purple-500 border-2' : 'border-gray-300'}`} type="text" {...register("wave", { required: true })} />
+
+            <label className="block text-sm font-medium text-gray-700">Board</label>
+            <input className={`form-input border px-2 rounded-md ${errors.board ? 'border-purple-500 border-2' : 'border-gray-300'}`} type="text" {...register("board", { required: true })} />
           </div>
 
           <MultiVideoUpload />
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium bg-gray-100 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium bg-gray-100 focus:bg-gray-300"
           >
             Submit
           </button>
+
 
         </form>
       </div>
