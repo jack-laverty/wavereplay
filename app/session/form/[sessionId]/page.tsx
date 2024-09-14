@@ -3,7 +3,7 @@
 import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Session } from '@/lib/types';
-import MultiVideoUpload from './components/MultiVideoUpload';
+import MultiVideoSelect from './components/MultiVideoSelect';
 import BackButton from './components/BackButton';
 
 import { useForm, SubmitHandler } from "react-hook-form"
@@ -21,6 +21,7 @@ const SessionForm: React.FC = () => {
   const params = useParams();
   const sessionId = params?.sessionId as string;
   const [sessionData, setSessionData] = useState<Partial<Session>>({});
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const {
     register,
@@ -79,7 +80,7 @@ const SessionForm: React.FC = () => {
             <input className={`form-input border px-2 rounded-md ${errors.board ? 'border-purple-500 border-2' : 'border-gray-300'}`} type="text" {...register("board", { required: true })} />
           </div>
 
-          <MultiVideoUpload />
+          <MultiVideoSelect onFilesChange={setSelectedFiles} />
 
           <button
             type="submit"
