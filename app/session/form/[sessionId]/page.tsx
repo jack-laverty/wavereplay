@@ -83,7 +83,7 @@ const SessionForm: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium bg-gray-100 focus:bg-gray-300"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium bg-gray-100 active:bg-gray-300"
           >
             Submit
           </button>
