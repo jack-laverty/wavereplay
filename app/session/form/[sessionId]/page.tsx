@@ -29,7 +29,34 @@ const SessionForm: React.FC = () => {
     watch,
     formState: { errors },
   } = useForm<Inputs>()
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+  
+  const onSubmit: SubmitHandler<Session> = async (data) => {
+    console.log(data);
+    try {
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      console.log("RESPONSE:\n", response);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Session added successfully:', result);
+        // Handle success (e.g., show a success message, reset form, etc.)
+      } else {
+        const errorText = await response.text();
+        console.error('Error adding session:', errorText);
+        // Handle error (e.g., show error message to user)
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // Handle error (e.g., show error message to user)
+    }
+  };
 
   useEffect(() => {
     if (sessionId && sessionId !== 'new') {
@@ -74,10 +101,16 @@ const SessionForm: React.FC = () => {
             </select>
             
             <label className="block text-sm font-medium text-gray-700">Wave</label>
-            <input className={`form-input border px-2 rounded-md ${errors.wave ? 'border-purple-500 border-2' : 'border-gray-300'}`} type="text" {...register("wave", { required: true })} />
+            <input
+              className={`form-input border px-2 rounded-md ${errors.wave ? 'border-purple-500 border-2' : 'border-gray-300'}`}
+              type="text" {...register("wave", { required: true, maxLength: 30 })}
+            />
 
             <label className="block text-sm font-medium text-gray-700">Board</label>
-            <input className={`form-input border px-2 rounded-md ${errors.board ? 'border-purple-500 border-2' : 'border-gray-300'}`} type="text" {...register("board", { required: true })} />
+            <input 
+              className={`form-input border px-2 rounded-md ${errors.board ? 'border-purple-500 border-2' : 'border-gray-300'}`}
+              type="text" {...register("board", { required: true, maxLength: 30 })} 
+            />
           </div>
 
           <MultiVideoSelect onFilesChange={setSelectedFiles} />
@@ -106,7 +139,8 @@ async function fetchSessionData(sessionId: string): Promise<Session> {
 
 async function createSession(sessionData: Partial<Session>): Promise<void> {
   // Implement creating a new session
-  throw new Error('Not implemented');
+  console.log("not implemented")
+  // throw new Error('Not implemented');
 }
 
 async function updateSession(sessionId: string, sessionData: Partial<Session>): Promise<void> {

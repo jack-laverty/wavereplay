@@ -70,15 +70,15 @@ In Supabase, under Authentication > URL Configuration:
 
 [Servers-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)
 
-### User Input
+### User Input (WIP)
 
 The app allows users to update the database with their own sessions via a new session form.
 
 #### Client Side:
 
 * React Hook Form
-* Zod
-* DOMPurify
+* Zod (not needed)
+* DOMPurify (not needed)
 * Fetch
 
 #### Server Side:
@@ -86,3 +86,10 @@ The app allows users to update the database with their own sessions via a new se
 * Formidable
 * Zod
 * Next.js Route Handlers
+
+#### Constraints
+
+* max file size is 50MB
+* max number of files per session is 20
+* max number of sessions per user is 20
+* access is given on a per user basis so the number of users is controlled
