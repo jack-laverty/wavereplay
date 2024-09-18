@@ -7,13 +7,10 @@ export async function POST(request: NextRequest) {
     const session: Session = await request.json();
     const supabase = createClient();
 
-    console.log("SESSION:\n", session)
-    
     const { data, error } = await supabase
-      .from('sessions')  // Replace 'sessions' with your actual table name
+      .from('sessions')
       .insert([
         {
-          session_id: 69,
           date: session.date,
           time: session.time,
           location: session.location,

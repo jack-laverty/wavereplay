@@ -8,14 +8,6 @@ import BackButton from './components/BackButton';
 
 import { useForm, SubmitHandler } from "react-hook-form"
 
-type Inputs = {
-  date: string
-  time: string
-  location: string
-  wave: string
-  board: string
-}
-
 const SessionForm: React.FC = () => {
   const router = useRouter();
   const params = useParams();
@@ -28,20 +20,18 @@ const SessionForm: React.FC = () => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Inputs>()
+  } = useForm<Session>()
   
-  const onSubmit: SubmitHandler<Session> = async (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<Session> = async (session) => {
     try {
+      console.log(session)
       const response = await fetch('/api/submit-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(session),
       });
-
-      console.log("RESPONSE:\n", response);
 
       if (response.ok) {
         const result = await response.json();

@@ -55,7 +55,7 @@ const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
           <span className="text-sm">modify</span>
         </button>
         <button className="flex flex-col items-center justify-center">
-          <img src="/delete3.svg" alt="Delete Icon" className="w-8 h-8" />
+          <img src="/delete.svg" alt="Delete Icon" className="w-8 h-8" />
           <span className="text-sm">delete</span>
         </button>
       </div>

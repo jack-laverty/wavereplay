@@ -10,7 +10,7 @@ async function getSession(id: string): Promise<Session | null> {
   const { data, error } = await supabase
     .from('sessions')
     .select('*')
-    .eq('session_id', id)
+    .eq('id', id)
     .single(); // Expect a single row
 
   if (error) {
@@ -26,7 +26,7 @@ async function getClips(id: string): Promise<Video[] | null> {
   const { data, error } = await supabase
     .from('clips')
     .select('*')
-    .eq('session_id', id); // we expect multiple
+    .eq('session', id); // we expect multiple
 
   if (error) {
       console.error('Error fetching clips:', error);

@@ -39,9 +39,9 @@ const SessionsList: React.FC<SessionsListProps> = ({ sessions }) => {
           <tbody>
             {sessions.map((session) => (
               <tr 
-                key={session.session_id} 
+                key={session.id} 
                 className="border-t border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
-                onClick={() => handleRowClick(session.session_id)}
+                onClick={() => handleRowClick(session.id)}
               >
                 <td className="px-4 py-2">{formatDate(session.date)}</td>
                 <td className="px-4 py-2">{formatTime(session.time)}</td>
@@ -51,7 +51,7 @@ const SessionsList: React.FC<SessionsListProps> = ({ sessions }) => {
                 <td className="px-4 py-2">{session.board}</td>
                 <td className="px-4 py-2">{session.wave_count}</td>
                 <td className="px-4 py-2">{session.time_surfed}</td>
-                <td className="px-4 py-2">{session.session_id}</td>
+                <td className="px-4 py-2">{session.id}</td>
               </tr>
             ))}
           </tbody>
@@ -77,9 +77,9 @@ const SessionsList: React.FC<SessionsListProps> = ({ sessions }) => {
           <tbody>
             {sessions.map((session) => (
               <tr 
-                key={session.session_id} 
+                key={session.id} 
                 className="border-t border-gray-300 hover:bg-gray-50 cursor-pointer"
-                onClick={() => handleRowClick(session.session_id)}
+                onClick={() => handleRowClick(session.id)}
               >
                 <td className="flex flex-col p-1">
                   <time>{session.date}</time>

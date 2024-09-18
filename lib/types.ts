@@ -1,6 +1,6 @@
 export interface Video {
   id: number;
-  sessionId: number;
+  session: number;
   title: string;
   videoUrl: string;
   timestamp: string;
@@ -24,5 +24,5 @@ export interface Session {
   wave_count: number;
   time_surfed: number;
   videos_path: string;
-  session_id: number;
+  id: number;
 }
