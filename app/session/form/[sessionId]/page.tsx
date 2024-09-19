@@ -9,10 +9,7 @@ import BackButton from './components/BackButton';
 import { useForm, SubmitHandler } from "react-hook-form"
 
 const SessionForm: React.FC = () => {
-  const router = useRouter();
-  const params = useParams();
-  const sessionId = params?.sessionId as string;
-  const [sessionData, setSessionData] = useState<Partial<Session>>({});
+  
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const {
@@ -21,41 +18,59 @@ const SessionForm: React.FC = () => {
     watch,
     formState: { errors },
   } = useForm<Session>()
-  
-  const onSubmit: SubmitHandler<Session> = async (session) => {
-    try {
-      console.log(session)
-      const response = await fetch('/api/submit-form', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(session),
-      });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Session added successfully:', result);
-        // Handle success (e.g., show a success message, reset form, etc.)
-      } else {
-        const errorText = await response.text();
-        console.error('Error adding session:', errorText);
-        // Handle error (e.g., show error message to user)
-      }
+  function uploadSessionAndFiles(
+    sessionData: Session, 
+    files: File[], 
+    onProgress: (progress: number) => void
+  ) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const formData = new FormData();
+  
+      formData.append('sessionData', JSON.stringify(sessionData));
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
+  
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = (event.loaded / event.total) * 100;
+          onProgress(percentComplete);
+        }
+      });
+  
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(JSON.parse(xhr.responseText));
+        } else {
+          reject(new Error('Upload failed'));
+        }
+      });
+  
+      xhr.addEventListener('error', () => {
+        reject(new Error('Network error'));
+      });
+  
+      xhr.open('POST', '/api/session-upload');
+      xhr.send(formData);
+    });
+  }
+  
+  const onSubmit: SubmitHandler<Session> = async (sessionData) => {
+
+    try {
+      const result = await uploadSessionAndFiles(sessionData, selectedFiles, (progress) => {
+        console.log(`Upload progress: ${progress}%`);
+        // Update your UI with the progress here
+      });
+      console.log('Session created and files uploaded:', result);
+      // Handle successful upload (e.g., show success message, reset form)
     } catch (error) {
-      console.error('Error submitting form:', error);
-      // Handle error (e.g., show error message to user)
+      console.error('Session creation or upload failed:', error);
+      // Handle failure (e.g., show error message)
     }
   };
-
-  useEffect(() => {
-    if (sessionId && sessionId !== 'new') {
-      // Fetch existing session data if sessionId is provided and not 'new'
-      fetchSessionData(sessionId).then(setSessionData);
-    }
-    else {
-    }
-  }, [sessionId]);
 
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
 
@@ -112,7 +127,6 @@ const SessionForm: React.FC = () => {
             Submit
           </button>
 
-
         </form>
       </div>
     </div>
@@ -120,20 +134,3 @@ const SessionForm: React.FC = () => {
 }
 
 export default SessionForm;
-
-// These functions would need to be implemented
-async function fetchSessionData(sessionId: string): Promise<Session> {
-  // Implement fetching session data
-  throw new Error('Not implemented');
-}
-
-async function createSession(sessionData: Partial<Session>): Promise<void> {
-  // Implement creating a new session
-  console.log("not implemented")
-  // throw new Error('Not implemented');
-}
-
-async function updateSession(sessionId: string, sessionData: Partial<Session>): Promise<void> {
-  // Implement updating an existing session
-  throw new Error('Not implemented');
-}

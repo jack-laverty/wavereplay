@@ -23,6 +23,5 @@ export interface Session {
   board: string;
   wave_count: number;
   time_surfed: number;
-  videos_path: string;
   id: number;
 }

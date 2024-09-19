@@ -1,23 +1,17 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone, FileRejection, DropzoneOptions } from 'react-dropzone';
 
-interface FileWithPreview extends File {
-  preview: string;
-}
-
 interface MultiVideoSelectProps {
   onFilesChange: (files: File[]) => void;
 }
 
 const MultiVideoSelect: React.FC<MultiVideoSelectProps> = ({ onFilesChange }) => {
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
-    const videoFiles = acceptedFiles.filter(file => file.type.startsWith('video/')) as FileWithPreview[];
-    const filesWithPreviews = videoFiles.map(file => Object.assign(file, {
-      preview: URL.createObjectURL(file)
-    }));
-    const updatedFiles = [...files, ...filesWithPreviews];
+    const videoFiles = acceptedFiles.filter(file => file.type.startsWith('video/')) as File[];
+    const updatedFiles = [...files, ...videoFiles];
+
     setFiles(updatedFiles);
     onFilesChange(updatedFiles);
     if (fileRejections.length > 0) {
@@ -25,22 +19,16 @@ const MultiVideoSelect: React.FC<MultiVideoSelectProps> = ({ onFilesChange }) =>
     }
   }, [files, onFilesChange]);
 
-  const removeFile = (file: FileWithPreview) => {
+  const removeFile = (file: File) => {
     const updatedFiles = files.filter(f => f !== file);
     setFiles(updatedFiles);
     onFilesChange(updatedFiles);
-    URL.revokeObjectURL(file.preview);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {'video/*': []},
   } as DropzoneOptions);
-
-  useEffect(() => {
-    // Clean up the object URLs when component unmounts
-    return () => files.forEach(file => URL.revokeObjectURL(file.preview));
-  }, [files]);
 
   return (
     <div className="p-4 text-xs">
