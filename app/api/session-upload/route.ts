@@ -16,6 +16,13 @@ export async function POST(request: NextRequest) {
     const files = formData.getAll('files') as File[];
     const sessionData = JSON.parse(formData.get('sessionData') as string) as Session;
 
+    sessionData.surfer = "Jack Laverty"
+    sessionData.wave_count = files.length
+
+    // test code
+    const { data: { user } } = await supabase.auth.getUser()
+    console.log('Current User ID:', user?.id)
+
     // Start a Supabase transaction
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
@@ -31,34 +38,32 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
 
-      
-
     if (sessionError) throw sessionError;
 
     // Upload files and create video entries
     const uploadPromises = files.map(async (file) => {
-      const fileName = `${session.id}/${file.name}`;
+      const fileName = `surfing/${Date.now()}_${file.name}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('videos')
+        .from('chum-bucket')
         .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
-      // Create a video entry in the database
-      const { data: videoData, error: videoError } = await supabase
-        .from('videos')
-        .insert({
-          session_id: session.id,
-          file_name: fileName,
-          storage_path: uploadData.path,
-          // Add any other relevant video metadata
-        })
-        .select()
-        .single();
+      // // Create a video entry in the database
+      // const { data: videoData, error: videoError } = await supabase
+      //   .from('videos')
+      //   .insert({
+      //     session_id: session.id,
+      //     file_name: fileName,
+      //     storage_path: uploadData.path,
+      //     // Add any other relevant video metadata
+      //   })
+      //   .select()
+      //   .single();
 
-      if (videoError) throw videoError;
+      // if (videoError) throw videoError;
 
-      return videoData;
+      // return videoData;
     });
 
     const uploadedVideos = await Promise.all(uploadPromises);
@@ -68,6 +73,7 @@ export async function POST(request: NextRequest) {
       session: session, 
       videos: uploadedVideos 
     });
+    
 
   } catch (error) {
     console.error('Error processing session and uploads:', error);
