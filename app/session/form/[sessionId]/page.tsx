@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation'; // send us back to the dashboard
 import { useState, useEffect } from 'react';
 import { Session } from '@/lib/types';
 import MultiVideoSelect from './components/MultiVideoSelect';
@@ -8,9 +8,17 @@ import BackButton from './components/BackButton';
 
 import { useForm, SubmitHandler } from "react-hook-form"
 
+interface PresignedUrl {
+  path: string;
+  signedUrl: string;
+  token: string;
+}
+
+
 const SessionForm: React.FC = () => {
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadProgress, setProgress] = useState(0);
 
   const {
     register,
@@ -19,42 +27,60 @@ const SessionForm: React.FC = () => {
     formState: { errors },
   } = useForm<Session>()
 
-  function uploadSessionAndFiles(
+  async function uploadSessionAndFiles(
     sessionData: Session, 
     files: File[], 
     onProgress: (progress: number) => void
   ) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
+      // create form data
       const formData = new FormData();
-  
       formData.append('sessionData', JSON.stringify(sessionData));
       files.forEach((file) => {
         formData.append('files', file);
       });
-  
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          const percentComplete = (event.loaded / event.total) * 100;
-          onProgress(percentComplete);
-        }
+
+      // Step 1: Get presigned URLs
+      const response = await fetch('/api/session-upload', {
+        method: 'POST',
+        body: new URLSearchParams({
+          sessionData: JSON.stringify(sessionData),
+          files: files.map(file => file.name).join(','), // Just sending file names for the presigned URL request
+        }),
       });
-  
-      xhr.addEventListener('load', () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(JSON.parse(xhr.responseText));
-        } else {
-          reject(new Error('Upload failed'));
-        }
+
+      const jsonResponse = await response.json();
+      const presignedUrls: PresignedUrl[] = jsonResponse.urls;
+
+      // Step 2: Upload files directly to Supabase using the presigned URLs
+      const uploadPromises = presignedUrls.map((presignedUrl, index) => {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('PUT', presignedUrl.signedUrl, true);
+          xhr.setRequestHeader('Content-Type', files[index].type);
+
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              const percentComplete = (event.loaded / event.total) * 100;
+              onProgress(percentComplete);
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve(xhr.responseText);
+            } else {
+              reject(new Error('Upload failed'));
+            }
+          };
+
+          xhr.onerror = () => reject(new Error('Network error'));
+
+          xhr.send(files[index]);
+        });
       });
-  
-      xhr.addEventListener('error', () => {
-        reject(new Error('Network error'));
-      });
-  
-      xhr.open('POST', '/api/session-upload');
-      xhr.send(formData);
-    });
+
+    // Wait for all uploads to complete
+    return await Promise.all(uploadPromises);
   }
   
   const onSubmit: SubmitHandler<Session> = async (sessionData) => {
@@ -62,12 +88,13 @@ const SessionForm: React.FC = () => {
     try {
       const result = await uploadSessionAndFiles(sessionData, selectedFiles, (progress) => {
         console.log(`Upload progress: ${progress}%`);
+        setProgress(progress);
         // Update your UI with the progress here
       });
-      console.log('Session created and files uploaded:', result);
+      console.log('Session created and presigned upload URLs retrieved:', result);
       // Handle successful upload (e.g., show success message, reset form)
     } catch (error) {
-      console.error('Session creation or upload failed:', error);
+      console.error('Session creation failed or failed to retrieve presigned upload URLs:', error);
       // Handle failure (e.g., show error message)
     }
   };
@@ -126,6 +153,9 @@ const SessionForm: React.FC = () => {
           >
             Submit
           </button>
+
+          <label className="block text-sm font-medium text-gray-700">{uploadProgress}</label>
+
 
         </form>
       </div>

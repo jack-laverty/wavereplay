@@ -3,11 +3,6 @@ import { createClient } from '@/lib/supabase/server';
 import { Video, Session } from '@/lib/types';
 
 
-// Accepts both session data and files in a single request.
-// Creates the session entry in the database.
-// Uploads each file to Supabase storage.
-// Creates a video entry in the database for each uploaded file.
-// Returns the created session and video data.
 export async function POST(request: NextRequest) {
   const supabase = createClient();
 
@@ -19,11 +14,7 @@ export async function POST(request: NextRequest) {
     sessionData.surfer = "Jack Laverty"
     sessionData.wave_count = files.length
 
-    // test code
-    const { data: { user } } = await supabase.auth.getUser()
-    console.log('Current User ID:', user?.id)
-
-    // Start a Supabase transaction
+    // add session to session table
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
       .insert([
@@ -40,38 +31,24 @@ export async function POST(request: NextRequest) {
 
     if (sessionError) throw sessionError;
 
-    // Upload files and create video entries
-    const uploadPromises = files.map(async (file) => {
-      const fileName = `surfing/${Date.now()}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
+    // Generate presigned URLs for each file
+    const presignedUrls = files.map(async (file) => {
+      const fileName = `surfing/${file}`;
+      const { data: url, error: urlError } = await supabase.storage
         .from('chum-bucket')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      // // Create a video entry in the database
-      // const { data: videoData, error: videoError } = await supabase
-      //   .from('videos')
-      //   .insert({
-      //     session_id: session.id,
-      //     file_name: fileName,
-      //     storage_path: uploadData.path,
-      //     // Add any other relevant video metadata
-      //   })
-      //   .select()
-      //   .single();
-
-      // if (videoError) throw videoError;
-
-      // return videoData;
+        .createSignedUploadUrl(fileName); // valid for 2 hours
+      
+      if (urlError) throw urlError;
+      
+      return url
     });
 
-    const uploadedVideos = await Promise.all(uploadPromises);
+    const presignedURLs = await Promise.all(presignedUrls);
 
     return NextResponse.json({ 
       success: true, 
-      session: session, 
-      videos: uploadedVideos 
+      // session: session, 
+      urls: presignedURLs 
     });
     
 

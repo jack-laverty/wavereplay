@@ -27,8 +27,6 @@ Learning to build a fullstack Next.js/React web app and maybe learning to surf g
 
 It's a simple dashboard to view all your sessions and a standard video player with some additional playback controls, timestamped annotations, and a glassboard overlay.
 
-This README is 10% user guide and 90% documentation to remind me how everything was implemented.
-
 
 
 ## Tech Stack
@@ -51,6 +49,8 @@ Row Level Security (RLS) is enabled for both. During development each database h
 
 A Supabase Storage Server is used for video file storage. It's S3 API compatible.
 
+Video files are uploaded using [signed upload urls](https://supabase.com/docs/reference/javascript/storage-from-createsigneduploadurl) to allow clients to upload directly to the S3 storage server.
+
 #### [Supabase Auth](https://authjs.dev/getting-started/authentication/oauth)
 
 Supabase Auth is used for authentication. GitHub provides a free OAuth service as the app is registered in the GitHub developer dashboard. Supabase provides [configuration docs](https://supabase.com/docs/guides/auth/social-login/auth-github) for this use case. Unauthenticated users are redirected to the login page via middleware.
@@ -65,14 +65,14 @@ In Supabase, under Authentication > URL Configuration:
 
 [Servers-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)
 
-### User Input (WIP)
 
-The app allows users to update the database with their own sessions via a new session form.
 
-Client side - React Hook Forms, Fetch
-Server side - Formidable, Zod, Nextjs Route Handlers
+## Design
+
+### File Uploads
 
 * max file size is 50MB
 * max number of files per session is 20
 * max number of sessions per user is 20
 * access is given on a per user basis so the number of users is controlled
+* presigned upload URLs give client direct upload capability and are valid for 2 hours from creation
