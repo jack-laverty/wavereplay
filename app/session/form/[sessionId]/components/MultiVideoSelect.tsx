@@ -45,9 +45,9 @@ const MultiVideoSelect: React.FC<MultiVideoSelectProps> = ({ onFilesChange }) =>
         <div className="mt-4">
           <ul className="space-y-2">
             {files.map((file, index) => (
-              <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                <div className="flex items-center">
-                  <button onClick={() => removeFile(file)} className=" hover:text-red-500">{file.name}</button>
+              <li key={index} className="flex items-center justify-between">
+                <div className="flex items-center ">
+                  <button onClick={() => removeFile(file)} className="bg-gray-100 p-2 rounded hover:text-red-500">{file.name}</button>
                 </div>
               </li>
             ))}

@@ -1,3 +1,5 @@
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 import dayjs from 'dayjs';
 
 export const readEnvVar = (name: string): string => {
@@ -25,4 +27,8 @@ export const formatDate = (date: string): string => {
   const dateTime = dayjs(`${date} 00:00:00`);
   const formattedDate = dateTime.format('D MMM YYYY');
   return formattedDate
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }

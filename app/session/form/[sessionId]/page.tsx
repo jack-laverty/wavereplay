@@ -4,9 +4,22 @@ import { useRouter, useParams } from 'next/navigation'; // send us back to the d
 import { useState, useEffect } from 'react';
 import { Session } from '@/lib/types';
 import MultiVideoSelect from './components/MultiVideoSelect';
-import BackButton from './components/BackButton';
-
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import { DatePicker } from "@/components/ui/date-picker"
+import { DateTimePicker } from "@/components/ui/date-time-picker"
+import { Input } from "@/components/ui/input"
+import UploadCompleteAnimation from "@/components/ui/upload-complete"
 import { useForm, SubmitHandler } from "react-hook-form"
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectLabel,
+} from "@/components/ui/select"
 
 interface PresignedUrl {
   path: string;
@@ -19,6 +32,9 @@ const SessionForm: React.FC = () => {
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadProgress, setProgress] = useState(0);
+  const router = useRouter();
+
+  const ANIMATION_DURATION = 1700; // 1.5 seconds + 200ms buffer
 
   const {
     register,
@@ -32,26 +48,25 @@ const SessionForm: React.FC = () => {
     files: File[], 
     onProgress: (progress: number) => void
   ) {
-      // create form data
+      // append session data
       const formData = new FormData();
       formData.append('sessionData', JSON.stringify(sessionData));
-      files.forEach((file) => {
-        formData.append('files', file);
-      });
+      
+      // append file names
+      const fileNames = files.map(file => file.name);
+      formData.append('files', JSON.stringify(fileNames));
 
-      // Step 1: Get presigned URLs
       const response = await fetch('/api/session-upload', {
         method: 'POST',
-        body: new URLSearchParams({
-          sessionData: JSON.stringify(sessionData),
-          files: files.map(file => file.name).join(','), // Just sending file names for the presigned URL request
-        }),
+        body: formData,
       });
 
       const jsonResponse = await response.json();
       const presignedUrls: PresignedUrl[] = jsonResponse.urls;
 
       // Step 2: Upload files directly to Supabase using the presigned URLs
+      let fileProgress = new Array(files.length).fill(0); // Track progress for each file
+
       const uploadPromises = presignedUrls.map((presignedUrl, index) => {
         return new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
@@ -60,8 +75,11 @@ const SessionForm: React.FC = () => {
 
           xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
-              const percentComplete = (event.loaded / event.total) * 100;
-              onProgress(percentComplete);
+              // Update progress for this specific file
+              fileProgress[index] = (event.loaded / event.total) * 100;
+              // Calculate the overall progress
+              const totalProgress = fileProgress.reduce((sum, progress) => sum + progress, 0) / files.length;
+              onProgress(totalProgress);
             }
           };
 
@@ -78,85 +96,95 @@ const SessionForm: React.FC = () => {
           xhr.send(files[index]);
         });
       });
-
-    // Wait for all uploads to complete
-    return await Promise.all(uploadPromises);
   }
   
   const onSubmit: SubmitHandler<Session> = async (sessionData) => {
 
     try {
       const result = await uploadSessionAndFiles(sessionData, selectedFiles, (progress) => {
-        console.log(`Upload progress: ${progress}%`);
         setProgress(progress);
-        // Update your UI with the progress here
       });
       console.log('Session created and presigned upload URLs retrieved:', result);
-      // Handle successful upload (e.g., show success message, reset form)
+
+      if (uploadProgress == 100) {
+        console.log('File upload finished, sending user back to dashboard');
+        setTimeout(() => {
+          router.push('/'); // back to dashboard
+        }, ANIMATION_DURATION);
+      }
     } catch (error) {
       console.error('Session creation failed or failed to retrieve presigned upload URLs:', error);
       // Handle failure (e.g., show error message)
     }
   };
 
+  const handleCancel = () => {
+    router.push('/');
+  };
+
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center py-6 sm:px-6 lg:px-8 text-sm">
+    <div className="bg-gray-100 flex flex-col items-center justify-center py-6 sm:px-6 lg:px-8 text-sm">
       <div className="max-w-xs">
-        <BackButton/>
-        <form className=" bg-white shadow-md rounded-xl p-6 mb-4" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-[1fr_2fr] gap-4 items-center pb-4">
-            <label>Date</label>
-            <input className={`form-input border px-2 rounded-md ${errors.date ? 'border-purple-500 border-2' : 'border-gray-300'}`}
-              type="date"
-              id="date"
-              {...register("date", {
-                required: "This field is required",
-                validate: (value) => value <= today || "Date cannot be in the future",
-              })}
-              max={today} // Set the maximum allowed date to today
-              />
-            
-            <label>Time</label>
-            <input className={`form-input border px-2 rounded-md ${errors.time ? 'border-purple-500 border-2' : 'border-gray-300'}`} type="time" {...register("time", { required: true })} />
-            
-            <label className="block text-sm font-medium text-gray-700">Location</label>
-            <select className={`form-input border px-2 rounded-md ${errors.location ? 'border-purple-500 border-2' : 'border-gray-300'}`} {...register("location", { required: true })}>
-              <option value="URBNSURF Sydney">URBNSURF Sydney</option>
-              <option value="URBNSURF Melbourne">URBNSURF Melbourne</option>
-              <option value="Waco Surf">Waco Surf</option>
-              <option value="Fireside Surf">Fireside Surf</option>
-              <option value="O2 Surftown MUC">O2 Surftown MUC</option>
-              <option value="Revel Surf AZ">Revel Surf AZ</option>
-              <option value="Parkwood Village">Parkwood Village</option>
-            </select>
-            
-            <label className="block text-sm font-medium text-gray-700">Wave</label>
-            <input
-              className={`form-input border px-2 rounded-md ${errors.wave ? 'border-purple-500 border-2' : 'border-gray-300'}`}
-              type="text" {...register("wave", { required: true, maxLength: 30 })}
-            />
+        <form className=" bg-white shadow-md rounded-xl space-y-4 p-6 mb-4" onSubmit={handleSubmit(onSubmit)}>
+          
+          <DatePicker />
+          
+          <Input type="time" disabled={uploadProgress > 0} max={today}/>
+          
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="URBNSURF Sydney">URBNSURF Sydney</SelectItem>
+              <SelectItem value="URBNSURF Melbourne">URBNSURF Melbourne</SelectItem>
+              <SelectItem value="Waco Surf">Waco Surf</SelectItem>
+              <SelectItem value="Fireside Surf">Fireside Surf</SelectItem>
+              <SelectItem value="O2 Surftown MUC">O2 Surftown MUC</SelectItem>
+              <SelectItem value="Revel Surf AZ">Revel Surf AZ</SelectItem>
+              <SelectItem value="Parkwood Village">Parkwood Village</SelectItem>
+            </SelectContent>
+          </Select>
 
-            <label className="block text-sm font-medium text-gray-700">Board</label>
-            <input 
-              className={`form-input border px-2 rounded-md ${errors.board ? 'border-purple-500 border-2' : 'border-gray-300'}`}
-              type="text" {...register("board", { required: true, maxLength: 30 })} 
-            />
+          <Input placeholder="Wave" disabled={uploadProgress > 0} />
+          
+          <Input placeholder="Board" disabled={uploadProgress > 0} />
+            
+          <AnimatePresence mode="wait">
+            {uploadProgress > 0 && uploadProgress < 100 ? (
+              <motion.div
+                key="uploading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center"
+              >
+                <div className="flex items-center mb-2">
+                  <span className="text-sm font-medium text-gray-700">Uploading... {uploadProgress}%</span>
+                </div>
+                <Progress className="w-full" value={uploadProgress} />
+              </motion.div>
+            ) : uploadProgress == 100 ? (
+              <motion.div
+                key="complete"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                className="flex flex-col items-center justify-center"
+              >
+                <UploadCompleteAnimation />
+                <span className="text-sm font-medium text-gray-700 mt-2">Upload Complete!</span>
+              </motion.div>
+            ) : (
+              <MultiVideoSelect onFilesChange={setSelectedFiles} />
+            )}
+          </AnimatePresence>
+          <div className="flex justify-between">
+            <Button variant="outline" type="button" onClick={handleCancel}>Cancel</Button>
+            <Button type="submit">Submit</Button>
           </div>
-
-          <MultiVideoSelect onFilesChange={setSelectedFiles} />
-
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium bg-gray-100 active:bg-gray-300"
-          >
-            Submit
-          </button>
-
-          <label className="block text-sm font-medium text-gray-700">{uploadProgress}</label>
-
-
         </form>
       </div>
     </div>
@@ -164,3 +192,13 @@ const SessionForm: React.FC = () => {
 }
 
 export default SessionForm;
+
+
+// TODO: UNCOMMENT AND COMMIT THIS CODE WHEN YOU ARE SATISFIED WITH THE FOLLOWING
+// Well-designed HTML forms are:
+
+// Well-structured and semantically correct.
+// Easy to use and navigate (keyboard).
+// Accessible with ARIA attributes and proper labels.
+// Has support for client and server side validation.
+// Well-styled and consistent with the rest of the application.

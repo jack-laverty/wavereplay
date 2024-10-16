@@ -5,8 +5,6 @@
 
 :root {
   --logo: #ffffff;
-  --foreground: #e0e7ff;
-  --background: #1e293b;
   --background-dark: #0f172a;
   --background-light: #3f4555;
   --button: #006fee;
@@ -34,3 +32,7 @@ body {
 .svg-filter {
   filter: invert(1);
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem}}

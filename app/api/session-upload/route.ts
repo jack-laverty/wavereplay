@@ -8,13 +8,12 @@ export async function POST(request: NextRequest) {
 
   try {
     const formData = await request.formData();
-    const files = formData.getAll('files') as File[];
-    const sessionData = JSON.parse(formData.get('sessionData') as string) as Session;
+    const sessionData = JSON.parse(formData.get('sessionData') as string);
 
-    sessionData.surfer = "Jack Laverty"
-    sessionData.wave_count = files.length
+    // sessionData.surfer = "Jack Laverty"
+    // sessionData.wave_count = files.length
 
-    // add session to session table
+    // Step 1: Insert session data into the database
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
       .insert([
@@ -31,12 +30,15 @@ export async function POST(request: NextRequest) {
 
     if (sessionError) throw sessionError;
 
-    // Generate presigned URLs for each file
-    const presignedUrls = files.map(async (file) => {
-      const fileName = `surfing/${file}`;
+    // Step 2: Extract the file names from the formData (JSON string)
+    const fileNames = JSON.parse(formData.get('files') as string); // Parses the file names array
+    console.log("FILENAMES: ", fileNames)
+
+    // Step 2: Generate presigned URLs for each file
+    const presignedUrls = fileNames.map(async (file: string) => {
       const { data: url, error: urlError } = await supabase.storage
         .from('chum-bucket')
-        .createSignedUploadUrl(fileName); // valid for 2 hours
+        .createSignedUploadUrl(`surfing/${file}`); // valid for 2 hours
       
       if (urlError) throw urlError;
       
@@ -44,6 +46,7 @@ export async function POST(request: NextRequest) {
     });
 
     const presignedURLs = await Promise.all(presignedUrls);
+    console.log("PRESIGNED URLS: ", presignedURLs)
 
     return NextResponse.json({ 
       success: true, 
