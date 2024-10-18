@@ -50,7 +50,6 @@ const formSchema = z.object({
 
 const SessionForm: React.FC = () => {
   
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadProgress, setProgress] = useState(0);
   const router = useRouter();
 
@@ -69,46 +68,46 @@ const SessionForm: React.FC = () => {
     },
   })
 
-  // submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
 
-    console.log("on submit handler, woo! here are your form values:", values)
-    // try {
-    //   const result = await uploadSessionAndFiles(values, selectedFiles, (progress) => {
-    //     setProgress(progress);
-    //   });
-    //   console.log('Session created and presigned upload URLs retrieved:', result);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
 
-    //   if (uploadProgress == 100) {
-    //     console.log('File upload finished, sending user back to dashboard');
-    //     setTimeout(() => {
-    //       router.push('/'); // back to dashboard
-    //     }, ANIMATION_DURATION);
-    //   }
-    // } catch (error) {
-    //   console.error('Session creation failed or failed to retrieve presigned upload URLs:', error);
-    //   // Handle failure (e.g., show error message)
-    // }
+    try {
+      const result = await uploadSession(values, (progress) => {
+        setProgress(progress);
+      });
+
+      if (uploadProgress == 100) {
+        console.log('File upload finished, sending user back to dashboard');
+        setTimeout(() => {
+          router.push('/'); // back to dashboard
+        }, ANIMATION_DURATION);
+      }
+    } catch (error) {
+      console.error('Session creation failed or failed to retrieve presigned upload URLs:', error);
+      // Handle failure (e.g., show error message)
+    }
   };
 
-  // cancel handler
+
   const handleCancel = () => {
     router.push('/');
   };
 
-  async function uploadSessionAndFiles(
-    sessionData: Session, 
-    files: File[], 
+  async function uploadSession(
+    session : z.infer<typeof formSchema>, 
     onProgress: (progress: number) => void
   ) {
-      // append session data
       const formData = new FormData();
-      formData.append('sessionData', JSON.stringify(sessionData));
-      
-      // append file names
-      const fileNames = files.map(file => file.name);
-      formData.append('files', JSON.stringify(fileNames));
 
+      formData.append('date', JSON.stringify(session.date));
+      formData.append('time', session.time);
+      formData.append('location', session.location);
+      formData.append('wave', session.wave);
+      formData.append('board', session.board);
+      session.files.forEach((file) => {
+        formData.append('files', file);
+      });
+      
       const response = await fetch('/api/session-upload', {
         method: 'POST',
         body: formData,
@@ -118,20 +117,18 @@ const SessionForm: React.FC = () => {
       const presignedUrls: PresignedUrl[] = jsonResponse.urls;
 
       // Step 2: Upload files directly to Supabase using the presigned URLs
-      let fileProgress = new Array(files.length).fill(0); // Track progress for each file
+      let fileProgress = new Array(session.files.length).fill(0); // Track progress for each file
 
       const uploadPromises = presignedUrls.map((presignedUrl, index) => {
         return new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open('PUT', presignedUrl.signedUrl, true);
-          xhr.setRequestHeader('Content-Type', files[index].type);
+          xhr.setRequestHeader('Content-Type', session.files[index].type);
 
           xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
-              // Update progress for this specific file
               fileProgress[index] = (event.loaded / event.total) * 100;
-              // Calculate the overall progress
-              const totalProgress = fileProgress.reduce((sum, progress) => sum + progress, 0) / files.length;
+              const totalProgress = fileProgress.reduce((sum, progress) => sum + progress, 0) / session.files.length;
               onProgress(totalProgress);
             }
           };
@@ -145,18 +142,15 @@ const SessionForm: React.FC = () => {
           };
 
           xhr.onerror = () => reject(new Error('Network error'));
-
-          xhr.send(files[index]);
+          xhr.send(session.files[index]);
         });
       });
   }
   
-  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-
   return (
-    <div className="flex flex-col items-center justify-center py-6 sm:px-6 lg:px-8 text-sm">
+    <div className="flex flex-col items-center justify-center py-6 text-sm">
       <Form {...form}>
-        <form className=" bg-white shadow-md rounded-xl space-y-4 p-6 mb-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className=" bg-white shadow-md rounded-xl space-y-8 p-6" onSubmit={form.handleSubmit(onSubmit)}>
           
           <FormField
             control={form.control}
@@ -312,14 +306,13 @@ const SessionForm: React.FC = () => {
                     ) : (
                       <MultiVideoSelect 
                         onFilesChange={(files) => {
-                          field.onChange(files); // Update form field
-                          setSelectedFiles(files); // Keep your local state if needed
+                          field.onChange(files);
                         }} 
                       />
                     )}
                   </AnimatePresence>
                 </FormControl>
-                <FormMessage /> {/* Add form error message display */}
+                <FormMessage />
               </FormItem>
             )}
           />

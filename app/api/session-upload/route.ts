@@ -8,7 +8,11 @@ export async function POST(request: NextRequest) {
 
   try {
     const formData = await request.formData();
-    const sessionData = JSON.parse(formData.get('sessionData') as string);
+    const date = JSON.parse(formData.get('date') as string);
+    const time = formData.get('time');
+    const location = formData.get('location');
+    const wave = formData.get('wave');
+    const board = formData.get('board');
 
     // sessionData.surfer = "Jack Laverty"
     // sessionData.wave_count = files.length
@@ -18,11 +22,11 @@ export async function POST(request: NextRequest) {
       .from('sessions')
       .insert([
         {
-          date: sessionData.date,
-          time: sessionData.time,
-          location: sessionData.location,
-          wave: sessionData.wave,
-          board: sessionData.board,
+          date: date,
+          time: time,
+          location: location,
+          wave: wave,
+          board: board,
         }
       ])
       .select()
@@ -30,28 +34,29 @@ export async function POST(request: NextRequest) {
 
     if (sessionError) throw sessionError;
 
-    // Step 2: Extract the file names from the formData (JSON string)
-    const fileNames = JSON.parse(formData.get('files') as string); // Parses the file names array
-    console.log("FILENAMES: ", fileNames)
+    const files = formData.getAll('files');
 
+    if (!files || files.length === 0) {
+      throw new Error("No files were uploaded.");
+    }
+    
     // Step 2: Generate presigned URLs for each file
-    const presignedUrls = fileNames.map(async (file: string) => {
-      const { data: url, error: urlError } = await supabase.storage
-        .from('chum-bucket')
-        .createSignedUploadUrl(`surfing/${file}`); // valid for 2 hours
-      
-      if (urlError) throw urlError;
-      
-      return url
-    });
-
-    const presignedURLs = await Promise.all(presignedUrls);
-    console.log("PRESIGNED URLS: ", presignedURLs)
+    const presignedUrls = await Promise.all(
+      (files as File[]).map(async (file: File) => {
+        const { data: url, error: urlError } = await supabase.storage
+          .from('chum-bucket')
+          .createSignedUploadUrl(`surfing/${file.name}`);
+    
+        if (urlError) throw urlError;
+    
+        return url;
+      })
+    );
 
     return NextResponse.json({ 
       success: true, 
-      // session: session, 
-      urls: presignedURLs 
+      session: session, 
+      urls: presignedUrls 
     });
     
 
