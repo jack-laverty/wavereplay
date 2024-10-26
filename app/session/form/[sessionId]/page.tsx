@@ -68,12 +68,12 @@ const SessionForm: React.FC = () => {
     },
   })
 
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
 
     try {
       const result = await uploadSession(values, (progress) => {
         setProgress(progress);
+        console.log(progress)
       });
 
       if (uploadProgress == 100) {
@@ -87,7 +87,6 @@ const SessionForm: React.FC = () => {
       // Handle failure (e.g., show error message)
     }
   };
-
 
   const handleCancel = () => {
     router.push('/');
@@ -116,9 +115,13 @@ const SessionForm: React.FC = () => {
       const jsonResponse = await response.json();
       const presignedUrls: PresignedUrl[] = jsonResponse.urls;
 
+      if (!Array.isArray(presignedUrls)) {
+        console.log(presignedUrls)
+        throw new Error('Invalid presigned URLs'); // TODO: handle this with
+      }
+        
       // Step 2: Upload files directly to Supabase using the presigned URLs
       let fileProgress = new Array(session.files.length).fill(0); // Track progress for each file
-
       const uploadPromises = presignedUrls.map((presignedUrl, index) => {
         return new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
@@ -148,9 +151,9 @@ const SessionForm: React.FC = () => {
   }
   
   return (
-    <div className="flex flex-col items-center justify-center py-6 text-sm">
+    <div className="flex flex-col items-center justify-center py-6 text-sm min-w-max">
       <Form {...form}>
-        <form className=" bg-white shadow-md rounded-xl space-y-8 p-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className=" bg-white shadow-md rounded-xl space-y-8 p-6 min-w-max" onSubmit={form.handleSubmit(onSubmit)}>
           
           <FormField
             control={form.control}
@@ -339,3 +342,4 @@ export default SessionForm;
 // Accessible with ARIA attributes and proper labels.
 // Has support for client and server side validation.
 // Well-styled and consistent with the rest of the application.
+// handle pre uploaded files
