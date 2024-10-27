@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button"
+import { Session } from "@/lib/types";
 
 import {
   ColumnDef,
@@ -19,7 +22,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { Button } from "@/components/ui/button"
 
 interface DataTableProps<TData, TValue> {
   
@@ -33,6 +35,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
 
   const [rowSelection, setRowSelection] = useState({})
+  const router = useRouter();
 
   const table = useReactTable({
     data,
@@ -44,6 +47,33 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   })
+
+  const handleDelete = async () => {
+    const selectedRowIds = table
+      .getFilteredSelectedRowModel()
+      .rows.map((row) => (row.original as { id: string }).id);
+
+
+    if (selectedRowIds.length === 0) return;
+
+    try {
+      const response = await fetch("/api/delete-sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: selectedRowIds }),
+      });
+
+      if (response.ok) {
+        router.refresh();
+      } else {
+        console.error("Failed to delete rows");
+      }
+    } catch (error) {
+      console.error("Error deleting rows:", error);
+    }
+  };
 
   return (
     <div>
@@ -91,31 +121,44 @@ export function DataTable<TData, TValue>({
             </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="flex items-center justify-between py-4">
+        <div>
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+            onClick={() => handleDelete()}
+          >
+            Delete
+          </Button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
+
       {/* test code */}
-      {table.getFilteredSelectedRowModel().rows.length > 0 && (
+      {/* {table.getFilteredSelectedRowModel().rows.length > 0 && (
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-      )}
+      )} */}
     </div>
   )
 }
