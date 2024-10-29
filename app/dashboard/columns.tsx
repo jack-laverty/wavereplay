@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Session } from "@/lib/types"
 import { Checkbox } from "@/components/ui/checkbox"
+import { formatTime, formatDate } from '@/lib/utils'
 
 // You can use a Zod schema instead of Session here if you want.
 
@@ -30,10 +31,12 @@ export const columns: ColumnDef<Session>[] = [
   {
     accessorKey: "date",
     header: "Date",
+    cell: ({ getValue }) => formatDate(getValue() as string),
   },
   {
     accessorKey: "time",
     header: "Time",
+    cell: ({ getValue }) => formatTime(getValue() as string),
   },
   {
     accessorKey: "location",

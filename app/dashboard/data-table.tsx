@@ -75,9 +75,13 @@ export function DataTable<TData, TValue>({
     }
   };
 
+  const handleAdd = async () => {
+    router.push('/session/form/new');
+  };
+
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="bg-white rounded-md border">
         <Table>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -113,7 +117,7 @@ export function DataTable<TData, TValue>({
                 ))
             ) : (
                 <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="text-center">
                     No results.
                 </TableCell>
                 </TableRow>
@@ -123,14 +127,24 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-between py-4">
         <div>
-          <Button
-            variant="destructive"
-            size="sm"
-            disabled={table.getFilteredSelectedRowModel().rows.length === 0}
-            onClick={() => handleDelete()}
-          >
-            Delete
-          </Button>
+          {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+              onClick={() => handleDelete()}
+            >
+              Delete
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => handleAdd()}
+            >
+              Create
+            </Button>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <Button

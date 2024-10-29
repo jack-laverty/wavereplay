@@ -79,7 +79,7 @@ const SessionForm: React.FC = () => {
       if (uploadProgress == 100) {
         console.log('File upload finished, sending user back to dashboard');
         setTimeout(() => {
-          router.push('/'); // back to dashboard
+          router.push('/dashboard'); // back to dashboard
         }, ANIMATION_DURATION);
       }
     } catch (error) {
@@ -89,7 +89,7 @@ const SessionForm: React.FC = () => {
   };
 
   const handleCancel = () => {
-    router.push('/');
+    router.push('/dashboard');
   };
 
   async function uploadSession(
