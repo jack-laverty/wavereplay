@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation'; // send us back to the dashboard
-import { useState, useEffect } from 'react';
-import { Session } from '@/lib/types';
+import { redirect } from 'next/navigation';
+import { useState } from 'react';
+import { getUsername } from '@/lib/supabase/user';
 import MultiVideoSelect from '@/components/ui/multi-video-select';
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -51,7 +51,6 @@ const formSchema = z.object({
 const SessionForm: React.FC = () => {
   
   const [uploadProgress, setProgress] = useState(0);
-  const router = useRouter();
 
   const ANIMATION_DURATION = 1700; // 1.5 seconds + 200ms buffer
 
@@ -70,6 +69,8 @@ const SessionForm: React.FC = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
 
+    console.log("handling submit")
+
     try {
       const result = await uploadSession(values, (progress) => {
         setProgress(progress);
@@ -79,7 +80,8 @@ const SessionForm: React.FC = () => {
       if (uploadProgress == 100) {
         console.log('File upload finished, sending user back to dashboard');
         setTimeout(() => {
-          router.push('/dashboard'); // back to dashboard
+          const username = getUsername();
+          redirect(`/${username}/dashboard`);
         }, ANIMATION_DURATION);
       }
     } catch (error) {
@@ -89,7 +91,9 @@ const SessionForm: React.FC = () => {
   };
 
   const handleCancel = () => {
-    router.push('/dashboard');
+    console.log("handling cancel")
+    const username = getUsername();
+    redirect(`/${username}/dashboard`);
   };
 
   async function uploadSession(

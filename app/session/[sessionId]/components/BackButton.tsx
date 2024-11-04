@@ -2,14 +2,14 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
+import { getUsername } from '@/lib/supabase/user';
 
 const BackButton = () => {
   
-  const router = useRouter();
-    
   const handleBack = () => {
-    router.push('/dashboard');
+    const username = getUsername();
+    redirect(`/${username}/dashboard`);
   };
 
   return (

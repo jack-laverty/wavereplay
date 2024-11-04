@@ -66,6 +66,24 @@ In Supabase, under Authentication > URL Configuration:
 [Servers-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)
 
 
+sequenceDiagram
+    participant U as User/Browser
+    participant A as Your App
+    participant S as Supabase
+    participant G as GitHub
+
+    U->>A: Clicks "Sign in with GitHub"
+    A->>S: Initiates OAuth flow
+    S->>G: Redirects to GitHub
+    U->>G: Authorizes app
+    G->>A: Redirects to /auth/callback with code
+    A->>S: Exchanges code for session
+    S->>G: Validates code
+    G->>S: Returns user data
+    S->>A: Returns session
+    A->>U: Redirects to /{username}/dashboard
+
+
 
 ## Design
 

@@ -35,6 +35,10 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
   if (
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
@@ -45,19 +49,21 @@ export async function updateSession(request: NextRequest) {
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
+  else if (user && session) {
+    const url = request.nextUrl.clone()
+    if (url.pathname === '/') {
+      // Get the username from user metadata
+      const username = user.user_metadata.user_name
 
-  // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
-  // creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
+      if (!username) {
+        // If no username is set, redirect to complete profile
+        return NextResponse.redirect(new URL('/complete-profile', request.url))
+      }
+
+      // Redirect to user's dashboard
+      return NextResponse.redirect(new URL(`/${username}/dashboard`, request.url))
+    }
+  }
 
   return supabaseResponse
 }
