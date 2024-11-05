@@ -1,5 +1,4 @@
 import React from 'react';
-import BackButton from './BackButton';
 import { Session } from '@/lib/types'
 import { formatDateTime } from '@/lib/utils'
 
@@ -11,8 +10,7 @@ const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
   return (
     <div className="flex items-center justify-between px-2 pb-2 bg-white">
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center">
-          <BackButton />
+        <div className="flex space-x-2 items-center">
           <div className="flex flex-col">
             <time className="flex text-sm md:text-lg">{formattedDate}</time>
             <time className="flex text-sm md:text-lg">{formattedTime}</time>
@@ -44,21 +42,6 @@ const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
         </div>
       </div>
 
-      <div className="hidden md:flex flex-col items-center justify-center">
-        <img src="/chickenjoe.jpg" alt="Profile Image" className="w-16 h-16 ml-2 rounded-full" />
-        <div className="text-lg">{session.surfer}</div>
-      </div>
-
-      <div className="hidden md:flex justify-end space-x-8 pr-4">
-        <button className="flex flex-col items-center justify-center">
-          <img src="/settings.svg" alt="Modify Icon" className="w-8 h-8" />
-          <span className="text-sm">modify</span>
-        </button>
-        <button className="flex flex-col items-center justify-center">
-          <img src="/delete.svg" alt="Delete Icon" className="w-8 h-8" />
-          <span className="text-sm">delete</span>
-        </button>
-      </div>
     </div>
   );
 };

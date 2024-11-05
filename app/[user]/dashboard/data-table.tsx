@@ -79,11 +79,6 @@ export function DataTable<TData, TValue>({
     router.push('/session/form/new');
   };
 
-  const handleRowClick = (row: TData) => {
-    router.push(`/session/${(row as any).id}`);
-    console.log('Row clicked:', row);
-  };
-
   return (
     <div>
       <div className="bg-white rounded-md border">
@@ -112,7 +107,6 @@ export function DataTable<TData, TValue>({
                 <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    onClick={() => handleRowClick(row.original)}
                 >
                     {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

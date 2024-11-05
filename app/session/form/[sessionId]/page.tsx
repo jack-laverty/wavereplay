@@ -1,6 +1,6 @@
 'use client';
 
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { getUsername } from '@/lib/supabase/user';
 import MultiVideoSelect from '@/components/ui/multi-video-select';
@@ -51,6 +51,7 @@ const formSchema = z.object({
 const SessionForm: React.FC = () => {
   
   const [uploadProgress, setProgress] = useState(0);
+  const router = useRouter();
 
   const ANIMATION_DURATION = 1700; // 1.5 seconds + 200ms buffer
 
@@ -68,24 +69,23 @@ const SessionForm: React.FC = () => {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-
-    console.log("handling submit")
-
     try {
       const result = await uploadSession(values, (progress) => {
-        setProgress(progress);
-        console.log(progress)
-      });
 
-      if (uploadProgress == 100) {
-        console.log('File upload finished, sending user back to dashboard');
-        setTimeout(() => {
-          const username = getUsername();
-          redirect(`/${username}/dashboard`);
-        }, ANIMATION_DURATION);
-      }
+        setProgress(progress);
+        console.log('Upload Session:', progress)
+
+        if (progress == 100) {
+          console.log('File upload finished, sending user back to dashboard');
+          setTimeout(() => {
+            const username = getUsername();
+            router.push(`/${username}/dashboard`);
+          }, ANIMATION_DURATION);
+        }
+      });
     } catch (error) {
       console.error('Session creation failed or failed to retrieve presigned upload URLs:', error);
+      console.error('TODO: handle this and abort mission, rollback transactions etc');
       // Handle failure (e.g., show error message)
     }
   };
@@ -93,7 +93,7 @@ const SessionForm: React.FC = () => {
   const handleCancel = () => {
     console.log("handling cancel")
     const username = getUsername();
-    redirect(`/${username}/dashboard`);
+    router.push(`/${username}/dashboard`);
   };
 
   async function uploadSession(
@@ -120,8 +120,7 @@ const SessionForm: React.FC = () => {
       const presignedUrls: PresignedUrl[] = jsonResponse.urls;
 
       if (!Array.isArray(presignedUrls)) {
-        console.log(presignedUrls)
-        throw new Error('Invalid presigned URLs'); // TODO: handle this with
+        throw new Error('Invalid presigned URLs:', presignedUrls); // TODO: handle this
       }
         
       // Step 2: Upload files directly to Supabase using the presigned URLs
@@ -135,7 +134,7 @@ const SessionForm: React.FC = () => {
           xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
               fileProgress[index] = (event.loaded / event.total) * 100;
-              const totalProgress = fileProgress.reduce((sum, progress) => sum + progress, 0) / session.files.length;
+              const totalProgress = Math.round(fileProgress.reduce((sum, progress) => sum + progress, 0) / session.files.length);
               onProgress(totalProgress);
             }
           };

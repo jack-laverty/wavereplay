@@ -1,7 +1,7 @@
 import React from 'react';
 import { Session } from '@/lib/types';
 import { formatDateTime } from '@/lib/utils';
-
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const VideoHeader: React.FC<{ session: Session }> = ({ session }) => {
 
@@ -9,7 +9,9 @@ const VideoHeader: React.FC<{ session: Session }> = ({ session }) => {
 
   return (
     <div className="video-header flex items-center p-4 bg-slate-900 text-white rounded-t-xl">
-      <img src="/chickenjoe.jpg" alt="Profile Image" className="w-14 h-14 rounded-full border-4 border-white" />
+      <Avatar>
+        <AvatarFallback>KS</AvatarFallback>
+      </Avatar>
       <div className="flex flex-col pl-5 space-y-1">
         <div className="flex space-x-2">
           <div className="font-bold text-base">{session.surfer}</div>

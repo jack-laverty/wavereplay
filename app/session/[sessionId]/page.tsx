@@ -21,16 +21,16 @@ async function getSession(id: string): Promise<Session | null> {
   return data;
 }
 
-async function getClips(id: string): Promise<Video[] | null> {
+async function getClips(id: string): Promise<Video[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('clips')
     .select('*')
     .eq('session', id); // we expect multiple
-
+    
   if (error) {
       console.error('Error fetching clips:', error);
-      return null;
+      return [];
   }
 
   return data;
@@ -46,16 +46,16 @@ export default async function SessionPage({ params }: { params: { sessionId: str
 
   // retrieve clips based on session ID
   const clips = await getClips(params.sessionId);
-  if (!clips) {
-    return <div>No clips assigned to this session</div>;
-  }
   
   return (
-    <div className='session-page'>
-      <SessionHeader session={session}/>
-      {/* <Link href={`/session/form/${sessionId}`}>Modify Session</Link> */}
+    <div className="session-page">
+      <SessionHeader session={session} />
       <div className="flex flex-col justify-between py-4 bg-gray-100">
-        <VideoWrapper clips={clips} session={session}/>
+        {clips.length === 0 ? (
+          <div>No clips assigned to this session</div>
+        ) : (
+          <VideoWrapper clips={clips} session={session} />
+        )}
       </div>
     </div>
   );
