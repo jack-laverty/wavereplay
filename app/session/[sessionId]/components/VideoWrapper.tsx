@@ -3,15 +3,15 @@ import { useState, useEffect } from 'react'
 import VideoHeader from './VideoHeader';
 import VideoPlayer from './VideoPlayer';
 import VideoList from './VideoList';
-import { Session, Video } from '@/lib/types'
+import { Session, VideoMetadata } from '@/lib/types'
 
 interface VideoWrapperProps {
-  clips: Video[];
+  clips: VideoMetadata[];
   session: Session;
 }
 
 export default function VideoWrapper({ clips, session }: VideoWrapperProps) {
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null)
+  const [selectedVideo, setSelectedVideo] = useState<VideoMetadata | null>(null)
 
   // Select the first video in the list on initial render
   useEffect(() => {
@@ -20,9 +20,9 @@ export default function VideoWrapper({ clips, session }: VideoWrapperProps) {
     }
   }, [clips, selectedVideo]);
 
-  const handleSelectVideo = (video: Video) => {
+  const handleSelectVideo = (video: VideoMetadata) => {
     setSelectedVideo(video);
-    console.log("Selected Video: ", video);
+    console.log("Selected VideoMetadata: ", video);
   };
 
   return (

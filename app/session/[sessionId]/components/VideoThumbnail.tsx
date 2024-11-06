@@ -1,9 +1,9 @@
 import React from 'react';
-import { Video } from '@/lib/types';
+import { VideoMetadata } from '@/lib/types';
 import { formatTime } from '@/lib/utils';
 
 interface VideoThumbnailProps {
-  video: Video;
+  video: VideoMetadata;
   isSelected: boolean;
   onSelect: () => void;
 }

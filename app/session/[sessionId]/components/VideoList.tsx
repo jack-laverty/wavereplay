@@ -2,12 +2,12 @@
 
 import React from 'react';
 import VideoThumbnail from './VideoThumbnail';
-import { Video } from '@/lib/types';
+import { VideoMetadata } from '@/lib/types';
 
 interface VideoListProps {
-  videos: Video[];
-  selectedVideo: Video | null;
-  onSelectVideo: (video: Video) => void;
+  videos: VideoMetadata[];
+  selectedVideo: VideoMetadata | null;
+  onSelectVideo: (video: VideoMetadata) => void;
 }
 
 const VideoList: React.FC<VideoListProps> = ({ videos, selectedVideo, onSelectVideo }) => {

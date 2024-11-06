@@ -14,10 +14,6 @@ export async function POST(request: NextRequest) {
     const wave = formData.get('wave');
     const board = formData.get('board');
 
-    // TODO: get this info from the user form or calculate it etc
-    // sessionData.surfer = "Jack Laverty"
-    // sessionData.wave_count = files.length
-
     // Step 1: Insert session data into the database
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
@@ -35,10 +31,14 @@ export async function POST(request: NextRequest) {
 
     if (sessionError) throw sessionError;
 
+    console.log("successfully made entry in session table, response:", session);
+    console.log("new session id:", session.id);
+
     const files = formData.getAll('files');
 
     if (!files || files.length === 0) {
-      throw new Error("Route handler didn't receive any files");
+      console.log("Route handler didn't receive any files")
+      return NextResponse.json({ error: "Route handler didn't receive any files" }, { status: 400 });
     }
 
     // Step 2: Append UUIDs to each file name
@@ -66,7 +66,38 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    console.log("got presigned URLs: ", presignedUrls);
+    // Step 4: Add database entries for video files
+    try {
+      const videoDataArray = await Promise.all(
+        files.map(async (file) => {
+          const fileName = `surfing/${Date.now()}_${file}`;
+          const { data: videoData, error: videoError } = await supabase
+            .from('videos')
+            .insert({
+              session_id: session.id,
+              file_name: fileName,
+              // add path to file
+              // Add any other relevant video metadata
+            })
+            .select()
+            .single();
+
+          if (videoError) throw videoError;
+
+          return videoData;
+        })
+      );
+
+      console.log('All video entries added:', videoDataArray);
+    } catch (error) {
+      console.error('Error adding video entries:', error);
+    }
+
+    return NextResponse.json({ 
+      success: false, 
+      session: null, 
+      urls: [] 
+    });
 
     return NextResponse.json({ 
       success: true, 

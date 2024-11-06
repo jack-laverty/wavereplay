@@ -55,7 +55,6 @@ const SessionForm: React.FC = () => {
 
   const ANIMATION_DURATION = 1700; // 1.5 seconds + 200ms buffer
 
-  // create form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,7 +67,7 @@ const SessionForm: React.FC = () => {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
       const result = await uploadSession(values, (progress) => {
 
@@ -100,8 +99,9 @@ const SessionForm: React.FC = () => {
     session : z.infer<typeof formSchema>, 
     onProgress: (progress: number) => void
   ) {
-      const formData = new FormData();
 
+      // build form to send to route handler
+      const formData = new FormData();
       formData.append('date', JSON.stringify(session.date));
       formData.append('time', session.time);
       formData.append('location', session.location);
@@ -111,6 +111,7 @@ const SessionForm: React.FC = () => {
         formData.append('files', file);
       });
       
+      // send and await respoonse containing presigned upload URLs
       const response = await fetch('/api/session-upload', {
         method: 'POST',
         body: formData,
@@ -123,7 +124,7 @@ const SessionForm: React.FC = () => {
         throw new Error('Invalid presigned URLs:', presignedUrls); // TODO: handle this
       }
         
-      // Step 2: Upload files directly to Supabase using the presigned URLs
+      // Upload files directly to Supabase using the presigned URLs
       let fileProgress = new Array(session.files.length).fill(0); // Track progress for each file
       const uploadPromises = presignedUrls.map((presignedUrl, index) => {
         return new Promise((resolve, reject) => {
@@ -156,7 +157,7 @@ const SessionForm: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center py-6 text-sm min-w-max">
       <Form {...form}>
-        <form className=" bg-white shadow-md rounded-xl space-y-8 p-6 min-w-max" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className=" bg-white shadow-md rounded-xl space-y-8 p-6 min-w-max" onSubmit={form.handleSubmit(handleSubmit)}>
           
           <FormField
             control={form.control}

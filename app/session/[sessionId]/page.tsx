@@ -2,7 +2,7 @@
 import React from 'react';
 import SessionHeader from "./components/SessionHeader";
 import VideoWrapper from './components/VideoWrapper';
-import { Session, Video } from '@/lib/types'
+import { Session, VideoMetadata } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
 
 async function getSession(id: string): Promise<Session | null> {
@@ -21,7 +21,7 @@ async function getSession(id: string): Promise<Session | null> {
   return data;
 }
 
-async function getClips(id: string): Promise<Video[]> {
+async function getClips(id: string): Promise<VideoMetadata[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('clips')
