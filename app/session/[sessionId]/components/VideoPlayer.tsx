@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
+import React, { useRef, useState, useEffect, ChangeEvent, useCallback } from 'react';
 
 interface VideoPlayerProps {
   title: string;
@@ -21,6 +21,27 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
     }
   }, [title]);
 
+  // Memoize togglePlay function to avoid re-renders unless needed
+  const togglePlay = useCallback((): void => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  }, [isPlaying]); // Add isPlaying as a dependency to toggle correctly
+
+  // Memoize moveFrame function to avoid re-renders unless needed
+  const moveFrame = useCallback((frames: number): void => {
+    if (videoRef.current) {
+      const frameTime = 1 / frameRate;
+      videoRef.current.currentTime += frames * frameTime;
+      setCurrentTime(videoRef.current.currentTime);
+    }
+  }, [frameRate]); // Add frameRate as a dependency for frame calculation
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') moveFrame(-1);
@@ -30,18 +51,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const togglePlay = (): void => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
+  }, [moveFrame, togglePlay]); // Add moveFrame and togglePlay to the dependency array
 
   const handleTimeUpdate = (): void => {
     if (videoRef.current) {
@@ -75,14 +85,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
     if (videoRef.current) {
       videoRef.current.playbackRate = rate;
       setPlaybackRate(rate);
-    }
-  };
-
-  const moveFrame = (frames: number): void => {
-    if (videoRef.current) {
-      const frameTime = 1 / frameRate;
-      videoRef.current.currentTime += frames * frameTime;
-      setCurrentTime(videoRef.current.currentTime);
     }
   };
 
