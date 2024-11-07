@@ -3,15 +3,15 @@ export interface VideoMetadata {
   session: number;
   title: string;
   videoUrl: string;
-  timestamp: string;
   duration: number;
   created_at: string;
   updated_at: string;
   order_in_session: number;
-  thumbnail_url: string;
   file_size: number;
   format: string;
   resolution: string;
+  width: number;
+  height: number;
 }
 
 export interface Session {

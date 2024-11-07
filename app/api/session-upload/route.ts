@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { v4 as uuidv4 } from 'uuid';
+import { VideoMetadata } from '@/lib/types';
 
 
 export async function POST(request: NextRequest) {
@@ -32,11 +33,10 @@ export async function POST(request: NextRequest) {
     if (sessionError) throw sessionError;
 
     console.log("successfully made entry in session table, response:", session);
-    console.log("new session id:", session.id);
 
-    const files = formData.getAll('files');
+    const files = formData.getAll('files') as File[];
 
-    if (!files || files.length === 0) {
+    if (!files || files.length === 0) { 
       console.log("Route handler didn't receive any files")
       return NextResponse.json({ error: "Route handler didn't receive any files" }, { status: 400 });
     }
@@ -66,36 +66,49 @@ export async function POST(request: NextRequest) {
       })
     );
 
+    console.log("typeof(files):", typeof(files));
+    console.log(files)
+
     // Step 4: Add database entries for video files
     try {
       const videoDataArray = await Promise.all(
-        files.map(async (file) => {
-          const fileName = `surfing/${Date.now()}_${file}`;
+        files.map(async (file: File, index: number) => {
+          const fileName = `surfing/${Date.now()}_${file.name}`;
+          
           const { data: videoData, error: videoError } = await supabase
-            .from('videos')
+            .from('clips')
             .insert({
-              session_id: session.id,
-              file_name: fileName,
-              // add path to file
-              // Add any other relevant video metadata
+              session: session.id,
+              title: fileName,
+              video_url: fileName, // This will be updated with the actual URL after upload
+              // duration: metadata?.duration,
+              // width: metadata?.width,
+              // height: metadata?.height,
+              // format: metadata?.format,
+              // file_size: metadata?.file_size,
+              // resolution: metadata?.resolution,
+              // created_at: metadata?.created_at,
+              // updated_at: metadata?.updated_at,
+              order_in_session: index + 1, // Simple ordering based on array index
             })
             .select()
             .single();
 
           if (videoError) throw videoError;
 
+          console.log("uploaded entry to clips table: ")
+          console.log(videoData);
           return videoData;
         })
       );
-
-      console.log('All video entries added:', videoDataArray);
     } catch (error) {
-      console.error('Error adding video entries:', error);
+      console.error('Error processing videos:', error);
+      throw error;
     }
 
     return NextResponse.json({ 
       success: false, 
-      session: null, 
+      session: null,
       urls: [] 
     });
 
