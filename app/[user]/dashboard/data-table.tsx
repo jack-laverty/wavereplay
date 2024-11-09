@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button"
 import { Session } from "@/lib/types";
+import { SquarePlay } from "lucide-react"
 
 import {
   ColumnDef,
@@ -79,6 +80,10 @@ export function DataTable<TData, TValue>({
     router.push('/session/form/new');
   };
 
+  const handleWatchSession = (row: TData) => {
+    router.push(`/session/${(row as any).id}`);
+  };
+
   return (
     <div>
       <div className="bg-white rounded-md border">
@@ -98,6 +103,7 @@ export function DataTable<TData, TValue>({
                     </TableHead>
                     )
                 })}
+                <TableHead/>
                 </TableRow>
             ))}
             </TableHeader>
@@ -113,6 +119,15 @@ export function DataTable<TData, TValue>({
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                     ))}
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleWatchSession(row.original)}
+                      >
+                        <SquarePlay />
+                      </Button>
+                    </TableCell>
                 </TableRow>
                 ))
             ) : (

@@ -3,19 +3,17 @@
 import { getUsername } from '@/lib/supabase/user';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-
-import { LogOut, SquareMenu, List } from "lucide-react"
+} from "@/components/ui/sheet";
+import { LogOut, Menu, List } from "lucide-react";
 
 const supabase = createClient();
 
@@ -38,40 +36,35 @@ export default function HamburgerMenu() {
       router.push('/login');
     }
     router.push(`/${username}/dashboard`);
-    //TODO: close sidebar
   };
 
   return (
     <Sheet>
       <SheetTrigger>
-      <SquareMenu />
+        <Menu size={36} />
       </SheetTrigger>
       <SheetContent side="left" className="w-[400px] sm:w-[540px]">
         <SheetHeader>
-          <SheetTitle>Menu</SheetTitle>
-          
-          {/* Dashboard */}
+          <SheetTitle>WaveReplay</SheetTitle>
+
+          {/* Dashboard Button */}
           <SheetDescription>
-            <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => Dashboard()}
-              >
-              <List className="mr-4" />
-              Dashboard
-            </Button>
+            <SheetClose asChild>
+              <Button variant="ghost" size="sm" onClick={Dashboard}>
+                <List className="mr-4" />
+                Dashboard
+              </Button>
+            </SheetClose>
           </SheetDescription>
-          
-          {/* Logout */}
+
+          {/* Logout Button */}
           <SheetDescription>
-            <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => Logout()}
-              >
-              <LogOut className="mr-4" />
-              Logout
-            </Button>
+            <SheetClose asChild>
+              <Button variant="ghost" size="sm" onClick={Logout}>
+                <LogOut className="mr-4" />
+                Logout
+              </Button>
+            </SheetClose>
           </SheetDescription>
 
         </SheetHeader>
