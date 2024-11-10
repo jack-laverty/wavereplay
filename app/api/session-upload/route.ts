@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     if (sessionError) throw sessionError;
 
-    console.log("successfully made entry in session table, response:", session);
+    console.log("added session to the database:", session);
 
     const files = formData.getAll('files') as File[];
 
@@ -66,20 +66,17 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    console.log("typeof(files):", typeof(files));
-    console.log(files)
-
     // Step 4: Add database entries for video files
     try {
       const videoDataArray = await Promise.all(
-        files.map(async (file: File, index: number) => {
-          const fileName = `surfing/${Date.now()}_${file.name}`;
+        filesWithUUIDs.map(async (file: File, index: number) => {
+          const fileName = `surfing/${file.name}`;
           
           const { data: videoData, error: videoError } = await supabase
             .from('clips')
             .insert({
               session: session.id,
-              title: fileName,
+              title: file.name,
               video_url: fileName, // This will be updated with the actual URL after upload
               // duration: metadata?.duration,
               // width: metadata?.width,
@@ -96,21 +93,15 @@ export async function POST(request: NextRequest) {
 
           if (videoError) throw videoError;
 
-          console.log("uploaded entry to clips table: ")
-          console.log(videoData);
           return videoData;
         })
       );
+
+      console.log(`added ${videoDataArray.length} clips to the database with the following data:`, videoDataArray);
     } catch (error) {
       console.error('Error processing videos:', error);
       throw error;
     }
-
-    return NextResponse.json({ 
-      success: false, 
-      session: null,
-      urls: [] 
-    });
 
     return NextResponse.json({ 
       success: true, 

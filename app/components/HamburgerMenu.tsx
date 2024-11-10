@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { LogOut, Menu, List } from "lucide-react";
+import { LogOut, Menu, AppWindow } from "lucide-react";
 
 const supabase = createClient();
 
@@ -43,32 +43,45 @@ export default function HamburgerMenu() {
       <SheetTrigger>
         <Menu size={36} />
       </SheetTrigger>
-      <SheetContent side="left" className="w-[400px] sm:w-[540px]">
+      <SheetContent side="left" className="w-[220px]">
         <SheetHeader>
-          <SheetTitle>WaveReplay</SheetTitle>
-
+          <SheetTitle className="pb-4 flex justify-center">
+            <img src="/wavereplay.svg" alt="Logo" className="w-20 md:w-24" />
+          </SheetTitle>
+  
           {/* Dashboard Button */}
           <SheetDescription>
             <SheetClose asChild>
-              <Button variant="ghost" size="sm" onClick={Dashboard}>
-                <List className="mr-4" />
+              <Button
+                variant="secondary"
+                className="w-44"  // Fixed width
+                onClick={Dashboard}
+                size="sm"
+              >
+                <AppWindow className="mr-4" />
                 Dashboard
               </Button>
             </SheetClose>
           </SheetDescription>
-
+  
           {/* Logout Button */}
           <SheetDescription>
             <SheetClose asChild>
-              <Button variant="ghost" size="sm" onClick={Logout}>
+              <Button
+                variant="secondary"
+                className="w-44"  // Fixed width
+                onClick={Logout}
+                size="sm"
+              >
                 <LogOut className="mr-4" />
                 Logout
               </Button>
             </SheetClose>
           </SheetDescription>
-
+  
         </SheetHeader>
       </SheetContent>
     </Sheet>
   );
+  
 }

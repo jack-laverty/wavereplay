@@ -1,63 +1,56 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client';
-
-const supabase = createClient();
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { videoId: string } }
 ) {
   try {
+    const supabase = createClient();
+
+    // Get video from Supabase with surfing/ prefix
     const { data, error } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET!)
-      .download("surfing/" + params.videoId);
+      .download(`surfing/${params.videoId}`);
 
-    if (error) {
-      console.error('Error streaming video:', error);
-      return NextResponse.json({ error: 'Error streaming video' }, { status: 500 });
-    }
-    
-    if (!data) {
-      console.error('No data returned from Supabase');
-      return NextResponse.json({ error: 'No data returned from storage' }, { status: 404 });
+    if (error || !data) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: 'Video not found' }, { status: 404 });
     }
 
-    const range = request.headers.get('range');
+    // Convert the data to a Blob with proper type
+    const videoBlob = new Blob([data], { type: 'video/mp4' });
+    const buffer = await videoBlob.arrayBuffer();
 
-    let response: NextResponse;
-
-    if (range) {
-      const parts = range.replace(/bytes=/, "").split("-");
-      const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : data.size - 1;
-      const chunkSize = (end - start) + 1;
-
-      response = new NextResponse(data.slice(start, end + 1), {
-        status: 206,
+    // Return simple response if no range request
+    if (!request.headers.get('range')) {
+      return new NextResponse(buffer, {
         headers: {
-          'Content-Range': `bytes ${start}-${end}/${data.size}`,
+          'Content-Type': 'video/mp4',
+          'Content-Length': videoBlob.size.toString(),
           'Accept-Ranges': 'bytes',
-          'Content-Length': chunkSize.toString(),
-          'Content-Type': 'video/mp4',
-        },
-      });
-    } else {
-      response = new NextResponse(data, {
-        status: 200,
-        headers: {
-          'Content-Length': data.size.toString(),
-          'Content-Type': 'video/mp4',
         },
       });
     }
 
-    // Add caching headers
-    response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400');
-    response.headers.set('ETag', `"${params.videoId}"`);
+    // Handle range request
+    const range = request.headers.get('range')!;
+    const start = parseInt(range.replace(/bytes=/, '').split('-')[0]);
+    const end = Math.min(start + 1000000, videoBlob.size - 1); // Stream in 1MB chunks
+    const chunk = buffer.slice(start, end + 1);
 
-    return response;
+    return new NextResponse(chunk, {
+      status: 206,
+      headers: {
+        'Content-Type': 'video/mp4',
+        'Content-Range': `bytes ${start}-${end}/${videoBlob.size}`,
+        'Content-Length': `${end - start + 1}`,
+        'Accept-Ranges': 'bytes',
+      },
+    });
+
   } catch (error) {
-    console.error('Catch all Error streaming video:', error);
-    return NextResponse.json({ error: 'Error streaming video', details: error }, { status: 500 });
+    console.error('Error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
