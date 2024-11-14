@@ -31,11 +31,12 @@ export default function HamburgerMenu() {
   };
 
   const Dashboard = async () => {
-    const username = getUsername();
-    if (!username) {
-      router.push('/login');
-    }
-    router.push(`/${username}/dashboard`);
+    const username = await getUsername();
+      if (!username) {
+        router.push('/login')
+        return;
+      }
+      router.push(`/${username}/dashboard`);
   };
 
   return (

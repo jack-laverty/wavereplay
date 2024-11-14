@@ -12,12 +12,14 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ video, isSelected, onSe
 
   return (
     <Button
-      variant={isSelected ? "default" : "outline"}
-      className="flex items-center justify-center rounded-lg p-0 w-36 md:w-44 h-24"
+      variant={"outline"}
+      className={`flex items-center justify-center rounded-lg p-0 w-36 md:w-44 h-24
+        ${isSelected ? "border-2 border-black" : ""}
+      `}
       onClick={onSelect}
     >
       <div className="relative overflow-hidden w-full h-full">
-        <video
+        {/* <video
           loop
           playsInline
           preload="metadata"
@@ -25,7 +27,7 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ video, isSelected, onSe
         >
           <source src={""} type="video/mp4" />
           Your browser does not support the video tag.
-        </video>
+        </video> */}
       </div>
     </Button>
   );

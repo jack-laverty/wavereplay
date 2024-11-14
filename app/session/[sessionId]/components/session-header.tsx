@@ -2,16 +2,18 @@ import React from 'react';
 import { Session } from '@/lib/types'
 import { formatDateTime } from '@/lib/utils'
 import { Timer } from 'lucide-react'
+import BackButton from "./back-button"
 
 
 const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
 
   const [formattedDate, formattedTime] = formatDateTime(session.date, session.time);
-  
+
   return (
     <div className="flex items-center justify-between px-2 pb-2 bg-white">
       <div className="flex flex-col space-y-2">
         <div className="flex space-x-2 items-center">
+          <BackButton/>
           <div className="flex flex-col">
             <time className="flex text-sm md:text-lg">{formattedDate}</time>
             <time className="flex text-sm md:text-lg">{formattedTime}</time>
