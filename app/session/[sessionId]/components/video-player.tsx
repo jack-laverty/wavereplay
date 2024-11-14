@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Play, Pause, Pencil, MessageSquarePlus } from "lucide-react";
 
 interface VideoPlayerProps {
   title: string;
@@ -128,14 +129,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
 
       <div className="flex flex-col space-y-4 p-4 rounded-b-lg">
         <div className="flex items-center space-x-2">
-          <Button onClick={togglePlay} variant="ghost" size="icon">
-            <Image
-              src={isPlaying ? "/pause-button.svg" : "/play-button.svg"}
-              alt={isPlaying ? "pause" : "play"}
-              width={32}
-              height={32}
-            />
-          </Button>
+        <Button onClick={togglePlay} variant="ghost" size="icon">
+          {isPlaying ? <Pause size={32} /> : <Play size={32} />}
+        </Button>
           <Slider
             value={currentTime}
             max={duration}
@@ -144,17 +140,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
             onValueCommit={handleSeek}
             className="w-full"
           />
-          <div className="text-sm w-32">{formatTime(currentTime[0])}</div>
+          <div className="text-sm">{formatTime(currentTime[0])}</div>
         </div>
 
-        <div className="flex items-center justify-between space-x-4">
-          <button>
-            <img src="/pencil.svg" alt="whiteboard" className="w-8 h-8 svg-filter" />
-          </button>
-          <button>
-            <img src="/bookmark.svg" alt="bookmark" className="w-8 h-8 svg-filter" />
-          </button>
-          <div className="flex-shrink-0 w-64">
+        <div className="flex items-center justify-between">
+          <div className="space-x-2">
+            <Button variant="ghost" size="icon">
+              <Pencil />
+            </Button>
+
+            <Button variant="ghost" size="icon">
+              <MessageSquarePlus />
+            </Button>
+          </div>
+
+          <div className="flex-shrink-0 w-32">
             <div className="flex items-center space-x-2">
               <Slider 
                 defaultValue={playbackRate}
@@ -165,6 +165,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
               <div className="text-sm w-6 text-right">{playbackRate[0].toFixed(1)}x</div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
