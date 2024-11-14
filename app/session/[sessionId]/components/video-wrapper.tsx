@@ -25,18 +25,16 @@ export default function VideoWrapper({ clips, session }: VideoWrapperProps) {
   };
 
   return (
-    <div className="flex flex-col justify-between py-4 bg-gray-100">
-      <div className="md:mx-auto bg-white md:p-6 rounded-xl">
-        <div className="flex flex-col">
-          <VideoHeader session={session} />
-          <VideoPlayer title={selectedVideo ? selectedVideo.title : ""} />
-        </div>
-        <VideoList 
-          videos={clips}
-          selectedVideo={selectedVideo}
-          onSelectVideo={handleSelectVideo}
-        />
+    <div className="flex flex-col justify-between md:mx-auto bg-white md:p-6 rounded-xl">
+      <div className="flex flex-col">
+        <VideoHeader session={session} />
+        <VideoPlayer title={selectedVideo ? selectedVideo.title : ""} />
       </div>
+      <VideoList 
+        videos={clips}
+        selectedVideo={selectedVideo}
+        onSelectVideo={handleSelectVideo}
+      />
     </div>
   );
 }

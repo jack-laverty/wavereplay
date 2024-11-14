@@ -1,6 +1,7 @@
 import React from 'react';
 import { Session } from '@/lib/types'
 import { formatDateTime } from '@/lib/utils'
+import { Timer } from 'lucide-react'
 
 
 const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
@@ -28,7 +29,7 @@ const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
       <div className="flex flex-col text-xs md:text-sm pr-6">
         <div className="grid grid-cols-2 grid-rows-3 gap-x-2">
           <div className="flex font-bold justify-end items-center">
-              <img src="/clock.svg" alt="clock" className="w-6 h-6"/>
+            <Timer />
           </div>
           <time className="flex justify-start items-center">{session.time_surfed} total</time>
           <div className="flex font-bold justify-end items-center">

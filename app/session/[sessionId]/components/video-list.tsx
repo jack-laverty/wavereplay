@@ -12,7 +12,7 @@ interface VideoListProps {
 
 const VideoList: React.FC<VideoListProps> = ({ videos, selectedVideo, onSelectVideo }) => {
   return (
-    <div className="flex flex-row overflow-x-auto p-4 space-x-4 bg-white scroll-smooth">
+    <div className="flex flex-row overflow-x-auto p-4 space-x-4 scroll-smooth">
       {videos.map((video, index) => (
         <VideoThumbnail
           key={index}
