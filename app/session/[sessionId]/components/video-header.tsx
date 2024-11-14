@@ -8,7 +8,7 @@ const VideoHeader: React.FC<{ session: Session }> = ({ session }) => {
   const [formattedDate, formattedTime] = formatDateTime(session.date, session.time);
 
   return (
-    <div className="video-header flex items-center p-4 bg-slate-900 text-white rounded-t-xl">
+    <div className="video-header flex items-center p-4 rounded-t-xl">
       <Avatar>
         <AvatarFallback>KS</AvatarFallback>
       </Avatar>

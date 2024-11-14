@@ -6,6 +6,13 @@ import { createClient } from '@/lib/supabase/server'
 async function getData(): Promise<Session[]> {
 
   const supabase = createClient();
+
+  // REMOVE START
+  // const { data: { session } } = await supabase.auth.getSession();
+  // const token = session?.access_token;
+  // console.log("JWT Token:", token);
+  // REMOVE END
+
   const { data: sessions, error } = await supabase
   .from('sessions')
   .select('*')

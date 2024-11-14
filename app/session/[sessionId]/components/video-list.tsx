@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import VideoThumbnail from './VideoThumbnail';
+import VideoThumbnail from './video-thumbnail';
 import { VideoMetadata } from '@/lib/types';
 
 interface VideoListProps {

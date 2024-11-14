@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react'
-import VideoHeader from './VideoHeader';
-import VideoPlayer from './VideoPlayer';
-import VideoList from './VideoList';
+import VideoHeader from './video-header';
+import VideoPlayer from './video-player';
+import VideoList from './video-list';
 import { Session, VideoMetadata } from '@/lib/types'
 
 interface VideoWrapperProps {
@@ -22,7 +22,6 @@ export default function VideoWrapper({ clips, session }: VideoWrapperProps) {
 
   const handleSelectVideo = (video: VideoMetadata) => {
     setSelectedVideo(video);
-    console.log("Selected VideoMetadata: ", video);
   };
 
   return (
@@ -33,7 +32,7 @@ export default function VideoWrapper({ clips, session }: VideoWrapperProps) {
           <VideoPlayer title={selectedVideo ? selectedVideo.title : ""} />
         </div>
         <VideoList 
-          videos={clips} 
+          videos={clips}
           selectedVideo={selectedVideo}
           onSelectVideo={handleSelectVideo}
         />

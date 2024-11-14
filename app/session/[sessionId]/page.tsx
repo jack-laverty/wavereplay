@@ -1,7 +1,7 @@
 
 import React from 'react';
-import SessionHeader from "./components/SessionHeader";
-import VideoWrapper from './components/VideoWrapper';
+import SessionHeader from "./components/session-header";
+import VideoWrapper from './components/video-wrapper';
 import { Session, VideoMetadata } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
 
