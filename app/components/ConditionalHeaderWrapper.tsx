@@ -10,8 +10,9 @@ interface ConditionalHeaderWrapperProps {
 export default function ConditionalHeaderWrapper({ children }: ConditionalHeaderWrapperProps) {
   const pathname = usePathname();
   const isLoginPage = pathname === '/login';
+  const isRegisterPage = pathname === '/register';
 
-  if (isLoginPage) {
+  if (isLoginPage || isRegisterPage) {
     return null;
   }
 

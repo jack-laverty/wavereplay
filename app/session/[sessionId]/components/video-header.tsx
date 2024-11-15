@@ -9,8 +9,9 @@ const VideoHeader: React.FC<{ session: Session }> = ({ session }) => {
 
   return (
     <div className="video-header flex items-center p-4 rounded-t-xl">
-      <Avatar>
-        <AvatarFallback>KS</AvatarFallback>
+      <Avatar className="h-16 w-16">
+        <AvatarImage src={'/chickenjoe.jpg'}></AvatarImage>
+        <AvatarFallback>CJ</AvatarFallback>
       </Avatar>
       <div className="flex flex-col pl-5 space-y-1">
         <div className="flex space-x-2">

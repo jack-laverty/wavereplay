@@ -92,9 +92,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
     setCurrentTime(newValue);
   };
   
-
   const handlePlaybackRateChange = (newValue: number[]) => {
     setPlaybackRate(newValue);
+    console.error("test")
   };
 
   const formatTime = (time: number): string => {
