@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import Link from "next/link"
-
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/ui/icons"
 import { buttonVariants } from "@/components/ui/button"
@@ -12,26 +11,40 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <>
-      <div className="container relative hidden md:flex h-[800px] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <Icons.wavereplay className=""/>
+    <div className="min-h-screen flex flex-col">
+
+      <nav className="w-full flex justify-end p-4">
         <Link
           href="/register"
           className={cn(
-            buttonVariants({ variant: "link", size: "sm" }),
-            "absolute right-4 top-4 md:right-8 md:top-8"
+            buttonVariants({ variant: "link", size: "sm" })
           )}
         >
           Create Account
         </Link>
-        <div className="lg:p-8">
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+      </nav>
+
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md space-y-8">
+
+          <div className="flex justify-center">
+            <Icons.wavereplay className="w-auto h-12 sm:h-16" />
+          </div>
+
+          <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg shadow-lg p-6 space-y-6">
             <div className="flex flex-col space-y-2 text-center">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Welcome back
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Sign in to your account
+              </p>
             </div>
             <UserAuthForm />
           </div>
+
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   )
 }
