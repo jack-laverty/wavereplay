@@ -10,6 +10,8 @@ interface VideoThumbnailProps {
 
 const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ video, isSelected, onSelect }) => {
 
+  const videoUrl = `/api/videos/${encodeURIComponent(video.title)}`;
+
   return (
     <Button
       variant={"outline"}
@@ -18,16 +20,18 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ video, isSelected, onSe
       `}
       onClick={onSelect}
     >
-      <div className="relative overflow-hidden w-full h-full">
-        {/* <video
+      <div className="relative overflow-hidden w-full h-full rounded-lg">
+        <video
           loop
+          autoPlay
+          muted
           playsInline
           preload="metadata"
           className="object-cover w-full h-full"
         >
-          <source src={""} type="video/mp4" />
+          <source src={videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
-        </video> */}
+        </video>
       </div>
     </Button>
   );
