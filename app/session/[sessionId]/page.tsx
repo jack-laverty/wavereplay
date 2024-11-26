@@ -1,10 +1,10 @@
 
 import React from 'react';
 import SessionHeader from "./components/session-header";
-import VideoWrapper from './components/video-wrapper';
+import VideoContainer from './components/video-container';
 import { Session, VideoMetadata } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
-import { Textarea } from "@/components/ui/textarea"
+import CommentsSection from './components/comments-section';
 
 
 async function getSession(id: string): Promise<Session | null> {
@@ -40,32 +40,24 @@ async function getClips(id: string): Promise<VideoMetadata[]> {
 
 export default async function SessionPage({ params }: { params: { sessionId: string } }) {
 
-  // retrieve the session information
+  const clips = await getClips(params.sessionId);
   const session = await getSession(params.sessionId);
+
   if (!session) {
     return <div>No session data available</div>;
   }
 
-  // retrieve clips based on session ID
-  const clips = await getClips(params.sessionId);
-  
   return (
     <div className="session-page pt-4">
       <SessionHeader session={session} />
-      <div className="flex py-4 bg-gray-100 mx-4 gap-4">
-        {/* Video player container */}
-        <div className="flex-1">
-          {clips.length === 0 ? (
-            <div>No clips assigned to this session</div>
-          ) : (
-            <VideoWrapper clips={clips} session={session} />
-          )}
-        </div>
+      <div className="py-4">
         
-        <div className="w-60 bg-white p-4 rounded-lg">
-          <h2 className="text-sm pb-2">Comments</h2>
-          <Textarea placeholder="Add a comment..." />
-        </div>
+        {clips.length === 0 ? (
+          <div>No clips assigned to this session</div>
+        ) : (
+          <VideoContainer clips={clips} session={session} />
+        )}
+
       </div>
     </div>
   );

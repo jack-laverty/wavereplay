@@ -17,8 +17,6 @@ export async function getUsername(): Promise<string> {
       redirect('/login') // Redirect to login if no user
     }
 
-    // Assuming username is stored in user.user_metadata.username
-    // Adjust this based on where you store the username in your Supabase setup
     const username = user.user_metadata.user_name
     
     if (!username) {
