@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import VideoHeader from './video-header';
 import VideoPlayer from './video-player';
 import VideoList from './video-list';
-import { ScrollArea } from "@/components/ui/scroll-area"
-// import CommentsSection from './comments-section';
 import { Session, VideoMetadata } from '@/lib/types'
 import CommentsSection from './comments-section';
 

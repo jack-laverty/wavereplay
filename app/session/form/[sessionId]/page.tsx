@@ -38,7 +38,9 @@ interface PresignedUrl {
 }
 
 const formSchema = z.object({
-  date: z.date(),
+  date: z.date().refine((val) => val <= new Date(), {
+    message: 'Date cannot be in the future'
+  }),
   time: z.string().refine((val) => /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val), {
     message: 'Invalid time format, expected HH:MM (24-hour)',
   }),

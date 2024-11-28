@@ -34,7 +34,16 @@ It's a simple dashboard to view all your sessions and a standard video player wi
 ### [NextJS](https://nextjs.org/docs)
 
 The whole show runs on the NextJS framework. It runs a later version so it uses the [App Router](https://nextjs.org/docs/app) to navigate between pages. [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) are used to access backend resources.
-Authentication is implemented with [Supabase Auth](https://supabase.com/docs/guides/auth). React server components are used where possible. The majority of components are styled with tailwind CSS.
+
+It's on Node 14.2.17 and it uses the [Nextjs app router](https://nextjs.org/docs/app) for navigation. It's styled (poorly) with tailwind CSS.
+
+#### [Zod](https://zod.dev/)
+
+Zod is used for client-side validation of user input.
+
+#### [Shadcn](https://ui.shadcn.com/docs/installation/next)
+
+Shadcn is used for creation and styling of reusable components.
 
 ### [Supabase](https://supabase.com/)
 

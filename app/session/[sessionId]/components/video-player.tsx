@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
-import Image from "next/image";
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -127,6 +126,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
         </>
       )}
 
+      {/* video scrubber and playback controls */}
       <div className="flex flex-col space-y-4 p-4 rounded-b-lg">
         <div className="flex items-center space-x-2">
         <Button onClick={togglePlay} variant="ghost" size="icon">
@@ -143,6 +143,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
           <div className="text-sm">{formatTime(currentTime[0])}</div>
         </div>
 
+        {/* analysis tools */}
         <div className="flex items-center justify-between">
           <div className="space-x-2">
             <Button variant="ghost" size="icon">
@@ -154,6 +155,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
             </Button>
           </div>
 
+          {/* playback rate */}
           <div className="flex-shrink-0 w-32">
             <div className="flex items-center space-x-2">
               <Slider 
