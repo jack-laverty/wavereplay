@@ -85,7 +85,7 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <div>
+    <>
       <div className="bg-white rounded-md border">
         <Table>
             <TableHeader>
@@ -188,6 +188,6 @@ export function DataTable<TData, TValue>({
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
       )} */}
-    </div>
+    </>
   )
 }

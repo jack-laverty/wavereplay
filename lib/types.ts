@@ -23,3 +23,12 @@ export interface Session {
   time_surfed: number;
   id: number;
 }
+
+export interface Comment {
+  id: number;
+  avatar_url: string;
+  timestamp: string;
+  author: string;
+  content: string;
+  video: number;
+}

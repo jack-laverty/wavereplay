@@ -103,7 +103,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-y-2">
       {error ? (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {error}
@@ -126,8 +126,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
         </>
       )}
 
-      {/* video scrubber and playback controls */}
-      <div className="flex flex-col space-y-4 p-4 rounded-b-lg">
+      <div className="flex flex-col p-4 rounded-b-lg">
         <div className="flex items-center space-x-2">
         <Button onClick={togglePlay} variant="ghost" size="icon">
           {isPlaying ? <Pause size={32} /> : <Play size={32} />}

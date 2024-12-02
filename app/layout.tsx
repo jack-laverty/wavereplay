@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import 'typeface-manrope';
 
-import Header from "./components/Header";
-import ConditionalHeaderWrapper from "./components/ConditionalHeaderWrapper";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "./components/app-sidebar"
 
 export const metadata: Metadata = {
   title: "wavereplay",
@@ -17,11 +17,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-gray-100">
-        <ConditionalHeaderWrapper>
-          <Header />
-        </ConditionalHeaderWrapper>
-        <main>{children}</main>
+      <body>
+        <SidebarProvider>
+          <AppSidebar />
+          <main className="w-full bg-slate-200">
+            <SidebarTrigger />
+            {children}
+          </main>
+        </SidebarProvider>
       </body>
     </html>
   );

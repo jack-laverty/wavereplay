@@ -3,15 +3,9 @@ import { DataTable } from "./data-table"
 import { Session } from "@/lib/types"
 import { createClient } from '@/lib/supabase/server'
 
-async function getData(): Promise<Session[]> {
+async function getSessions(): Promise<Session[]> {
 
   const supabase = createClient();
-
-  // REMOVE START
-  // const { data: { session } } = await supabase.auth.getSession();
-  // const token = session?.access_token;
-  // console.log("JWT Token:", token);
-  // REMOVE END
 
   const { data: sessions, error } = await supabase
   .from('sessions')
@@ -25,11 +19,11 @@ async function getData(): Promise<Session[]> {
   return sessions
 }
 
-export default async function DemoPage() {
-  const data = await getData()
+export default async function Dashboard() {
+  const data = await getSessions()
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="m-6">
       <DataTable columns={columns} data={data} />
     </div>
   )
