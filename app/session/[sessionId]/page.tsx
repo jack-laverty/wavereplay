@@ -4,7 +4,6 @@ import SessionHeader from "./components/session-header";
 import VideoContainer from './components/video-container';
 import { Session, VideoMetadata } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
-import CommentsSection from '../../../components/ui/comments-section';
 
 
 async function getSession(id: string): Promise<Session | null> {

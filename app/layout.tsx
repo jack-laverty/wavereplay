@@ -4,6 +4,7 @@ import 'typeface-manrope';
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./components/app-sidebar"
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: "wavereplay",
@@ -24,6 +25,7 @@ export default function RootLayout({
             <SidebarTrigger />
             {children}
           </main>
+          <Toaster />
         </SidebarProvider>
       </body>
     </html>

@@ -8,6 +8,10 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { SendHorizontal } from "lucide-react";
 import { Comment } from "@/lib/types";
 import { cn } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast"
+import { formatRelative } from 'date-fns';
+import { getUsername, getSession } from '@/lib/supabase/user';
+
 
 interface CommentsSectionProps {
   comments: Comment[]
@@ -15,12 +19,52 @@ interface CommentsSectionProps {
   className?: string;
 }
 
+
 export default function CommentsSection({ comments, setComments, className } : CommentsSectionProps) {
   
   const [inputValue, setInputValue] = useState('');
+  const { toast } = useToast();
+  
+  const handleAddComment = async () => {
+    
+    if (!inputValue.trim()) return;
+    
+    const session = await getSession();
 
-  const handleAddComment = () => {
-    console.log('handleAddComment()');
+    try {
+      const response = await fetch('/api/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: inputValue,
+          timestamp: new Date().toISOString(),
+          author: session.user.user_metadata.user_name,
+          video: 12,
+          avatar_url: session.user.user_metadata.avatar_url,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to submit comment');
+      }
+  
+      const newComment = await response.json();
+  
+      // optimistic update
+      setComments(prevComments => [newComment, ...prevComments]);
+      
+      setInputValue('');
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+      toast({
+        title: "Submission Error",
+        description: "Failed to write comment to database",
+        variant: "destructive",
+      })
+    }
   };
 
   return (
@@ -47,7 +91,7 @@ export default function CommentsSection({ comments, setComments, className } : C
 
       {/* comment section */}
       <ScrollArea>
-        <div className="space-y-2 p-2">
+        <div className="md:text-xs space-y-2 p-2">
           {comments.map((comment) => (
             <Card key={comment.id}>
               <CardContent className="p-2">
@@ -59,8 +103,8 @@ export default function CommentsSection({ comments, setComments, className } : C
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{comment.author}</span>
-                      <span className="text-sm text-gray-500">
-                        {comment.timestamp}
+                      <span className=" text-gray-500">
+                        {formatRelative(comment.timestamp, new Date())}
                       </span>
                     </div>
                     <p className="mt-1 text-gray-700">{comment.content}</p>
