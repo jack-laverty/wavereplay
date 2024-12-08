@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { useToast } from "@/hooks/use-toast"
 import { Comment } from "@/lib/types";
 import { getSession } from '@/lib/supabase/user';
@@ -12,7 +12,7 @@ export function useComments(
   const { toast } = useToast();
 
   // fetch the existing comments from the database
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     
     if (!videoId) return; // Avoid making the request if the ID is missing
 
@@ -26,9 +26,9 @@ export function useComments(
       setComments(comments);  // update the comments
     } catch (error) {
       console.error('Error fetching comments:', error);
-      setComments([]); // Clear comments on error
+      setComments([]); // clear comments on error
     }
-  };
+  }, [videoId, setComments]); // Memoize the function based on videoId and setComments
 
   // add a new comment
   const addComment = async (commentContent: string,) => {
