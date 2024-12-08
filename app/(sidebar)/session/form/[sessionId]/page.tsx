@@ -159,7 +159,10 @@ const SessionForm: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center py-6 text-sm min-w-max">
       <Form {...form}>
-        <form className=" bg-white shadow-md rounded-xl space-y-8 p-6 min-w-max" onSubmit={form.handleSubmit(handleSubmit)}>
+        <form 
+          className="bg-white shadow-md rounded-xl space-y-8 p-6 min-w-[300px] w-full max-w-lg"
+          onSubmit={form.handleSubmit(handleSubmit)}
+        >
           
           <FormField
             control={form.control}
