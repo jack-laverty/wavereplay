@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "@/app/globals.css";
 import 'typeface-manrope';
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "./components/app-sidebar"
+import { AppSidebar } from "@/app/components/app-sidebar"
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={false}>
           <AppSidebar />
           <main className="w-full bg-slate-200">
             <SidebarTrigger />
