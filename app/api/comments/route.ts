@@ -1,5 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export async function GET(request: NextRequest) {
+  try {
+
+    const { searchParams } = request.nextUrl;
+    const videoId = searchParams.get('videoId');
+
+    const response = await fetch(`${process.env.FASTAPI_SERVER_URL}/api/comments/${videoId}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch comments from server');
+    }
+
+    const comments = await response.json();
+    return NextResponse.json(comments, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: error }, { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

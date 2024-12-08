@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,64 +8,36 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { SendHorizontal } from "lucide-react";
 import { Comment } from "@/lib/types";
 import { cn } from "@/lib/utils"
-import { useToast } from "@/hooks/use-toast"
 import { formatRelative } from 'date-fns';
-import { getUsername, getSession } from '@/lib/supabase/user';
 
 
+// comments are optional because there's
+// no guarantee that the video player has a valid video loaded.
+// server could fail to fetch session videos etc
 interface CommentsSectionProps {
-  comments: Comment[]
-  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
   className?: string;
+  comments: Comment[];
+  addComment: (commentText: string) => void;
 }
 
 
-export default function CommentsSection({ comments, setComments, className } : CommentsSectionProps) {
+export default function CommentSection({
+  comments, 
+  addComment,
+  className,
+}: CommentsSectionProps) {
   
   const [inputValue, setInputValue] = useState('');
-  const { toast } = useToast();
-  
-  const handleAddComment = async () => {
-    
-    if (!inputValue.trim()) return;
-    
-    const session = await getSession();
 
-    try {
-      const response = await fetch('/api/comments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content: inputValue,
-          timestamp: new Date().toISOString(),
-          author: session.user.user_metadata.user_name,
-          video: 12,
-          avatar_url: session.user.user_metadata.avatar_url,
-        }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to submit comment');
-      }
-  
-      const newComment = await response.json();
-  
-      // optimistic update
-      setComments(prevComments => [newComment, ...prevComments]);
-      
-      setInputValue('');
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-      toast({
-        title: "Submission Error",
-        description: "Failed to write comment to database",
-        variant: "destructive",
-      })
-    }
+  const handleAddComment = async () => {
+    addComment(inputValue);
+    setInputValue('');
   };
+
+  // Sort comments by recency (most recent first)
+  const sortedComments = [...comments].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
 
   return (
     <div className={cn("default-styles min-w-72 bg-white rounded-md", className)}>
@@ -90,9 +62,10 @@ export default function CommentsSection({ comments, setComments, className } : C
       </div>
 
       {/* comment section */}
-      <ScrollArea>
+      <ScrollArea> 
         <div className="md:text-xs space-y-2 p-2">
-          {comments.map((comment) => (
+        {sortedComments.length > 0 ? (
+          sortedComments.map((comment) => (
             <Card key={comment.id}>
               <CardContent className="p-2">
                 <div className="flex items-start gap-4">
@@ -103,7 +76,7 @@ export default function CommentsSection({ comments, setComments, className } : C
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{comment.author}</span>
-                      <span className=" text-gray-500">
+                      <span className="text-gray-500">
                         {formatRelative(comment.timestamp, new Date())}
                       </span>
                     </div>
@@ -112,7 +85,10 @@ export default function CommentsSection({ comments, setComments, className } : C
                 </div>
               </CardContent>
             </Card>
-          ))}
+          ))
+        ) : (
+          <p className="text-gray-500 text-center">No comments yet. Be the first to comment!</p>
+        )}
         </div>
       </ScrollArea>
     </div>
