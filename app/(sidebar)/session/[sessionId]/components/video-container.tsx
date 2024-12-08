@@ -25,8 +25,8 @@ export default function VideoContainer({ clips, session }: VideoContainerProps) 
   useEffect(() => {
     if (selectedVideo?.id) {
       fetchComments();
-    };
-  }, [selectedVideo]);
+    }
+  }, [selectedVideo, fetchComments]);
 
   // Select the first video in the list on initial render
   useEffect(() => {
