@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import 'typeface-manrope';
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/app/components/app-sidebar"
 import { Toaster } from "@/components/ui/toaster"
+import Header from "./header"
 
 export const metadata: Metadata = {
   title: "wavereplay",
@@ -22,7 +23,7 @@ export default function RootLayout({
         <SidebarProvider defaultOpen={false}>
           <AppSidebar />
           <main className="w-full bg-slate-200">
-            <SidebarTrigger />
+            <Header />
             {children}
           </main>
           <Toaster />
