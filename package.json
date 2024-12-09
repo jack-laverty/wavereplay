@@ -24,7 +24,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.4",
-    "@supabase/ssr": "^0.4.0",
+    "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.0",
     "@tanstack/react-table": "^8.20.5",
     "@types/formidable": "^3.4.5",
