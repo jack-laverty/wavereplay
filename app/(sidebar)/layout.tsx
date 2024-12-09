@@ -3,7 +3,7 @@ import "@/app/globals.css";
 import 'typeface-manrope';
 
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/app/components/app-sidebar"
+import { AppSidebar } from "@/app/(sidebar)/app-sidebar"
 import { Toaster } from "@/components/ui/toaster"
 import Header from "./header"
 
