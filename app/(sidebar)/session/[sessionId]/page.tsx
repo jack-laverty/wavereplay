@@ -49,15 +49,13 @@ export default async function SessionPage({ params }: { params: { sessionId: str
   return (
     <div className="session-page pt-4">
       <SessionHeader session={session} />
-      <div className="py-4">
         
-        {clips.length === 0 ? (
-          <div>No clips assigned to this session</div>
-        ) : (
-          <VideoContainer clips={clips} session={session} />
-        )}
+      {clips.length === 0 ? (
+        <div>No clips assigned to this session</div>
+      ) : (
+        <VideoContainer clips={clips} session={session} />
+      )}
 
-      </div>
     </div>
   );
 };

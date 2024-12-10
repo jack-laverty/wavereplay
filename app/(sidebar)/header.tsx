@@ -13,12 +13,12 @@ export default async function Header() {
   }
 
   return (
-    <header className="flex flex-row md:h-20 p-2 items-center justify-between relative">
+    <header className="bg-background flex flex-row md:h-20 p-2 items-center justify-between relative">
       <SidebarTrigger />
       <div className="flex justify-center items-center">
         <img src="/wavereplay.svg" alt="Logo" className="w-20 md:w-24" />
       </div>
-      <Avatar>
+      <Avatar className="ring-2">
         <AvatarImage src={data.user.user_metadata.avatar_url}  />
         <AvatarFallback>UN</AvatarFallback>
       </Avatar>

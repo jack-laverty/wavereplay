@@ -103,7 +103,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
   };
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="bg-background flex flex-col gap-y-2">
       {error ? (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {error}

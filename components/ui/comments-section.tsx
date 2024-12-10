@@ -40,7 +40,7 @@ export default function CommentSection({
   );
 
   return (
-    <div className={cn("default-styles min-w-72 bg-white rounded-md", className)}>
+    <div className={cn("default-styles min-w-72 bg-background rounded-md", className)}>
  
       {/* add a comment */}
       <div className="flex items-center p-2 space-x-2">

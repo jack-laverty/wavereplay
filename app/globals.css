@@ -7,18 +7,6 @@
   --font: 'Manrope'
 }
 
-header {
-  color: black;
-  background: white;
-  font-family: var(--font);
-}
-
-body {
-  color: black;
-  background: white;
-  font-family: var(--font);
-}
-
 @layer base {
   :root {
     --radius: 0.5rem;

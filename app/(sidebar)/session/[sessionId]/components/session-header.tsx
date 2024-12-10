@@ -10,7 +10,7 @@ const SessionHeader: React.FC<{ session: Session }> = ({ session }) => {
   const [formattedDate, formattedTime] = formatDateTime(session.date, session.time);
 
   return (
-    <div className="flex items-center justify-between px-2 pb-2 bg-white">
+    <div className="bg-background flex items-center justify-between px-2 pb-2">
       <div className="flex flex-col space-y-2">
         <div className="flex space-x-2 items-center">
           <BackButton/>

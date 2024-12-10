@@ -15,8 +15,8 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ video, isSelected, onSe
   return (
     <Button
       variant={"outline"}
-      className={`flex items-center justify-center rounded-lg p-0 w-36 md:w-44 h-24
-        ${isSelected ? "border-2 border-black" : ""}
+      className={`items-center rounded-xl justify-center p-0 min-w-36 md:w-44 h-24
+        ${isSelected ? "border-2" : ""}
       `}
       onClick={onSelect}
     >
