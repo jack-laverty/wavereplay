@@ -14,7 +14,7 @@ interface VideoListProps {
 const VideoList: React.FC<VideoListProps> = ({ videos, selectedVideo, onSelectVideo }) => {
   return (
 
-    <ScrollArea className="bg-background rounded-b-lg whitespace-nowrap">
+    <ScrollArea className="bg-background whitespace-nowrap">
       <div className="p-2 space-x-2">
         {videos.map((video, index) => (
           <VideoThumbnail

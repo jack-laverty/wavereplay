@@ -40,11 +40,11 @@ export default function VideoContainer({ clips, session }: VideoContainerProps) 
   };
 
   return (
-    <div className="flex flex-col justify-between md:mx-auto md:p-6 rounded-xl">
-      <div className="flex gap-4 flex-1 overflow-hidden">
+    <div className="flex flex-col justify-between md:mx-auto p-4 max-w-fit">
+      
+      <div className="flex justify-center gap-4">
 
-        {/* video section */}
-        <div className="flex flex-col rounded-xl max-w-screen-lg">
+        <div className="flex flex-col rounded-xl max-w-screen-md pb-2 bg-background">
           <VideoHeader session={session} />
           <VideoPlayer title={selectedVideo ? selectedVideo.title : ''} />
           <VideoList
@@ -54,7 +54,6 @@ export default function VideoContainer({ clips, session }: VideoContainerProps) 
           />
         </div>
 
-        {/* comments section */}
         <CommentsSection 
           className="rounded-xl"
           comments={comments}
