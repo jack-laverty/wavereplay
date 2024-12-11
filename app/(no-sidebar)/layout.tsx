@@ -1,7 +1,6 @@
-import type { Metadata } from "next";
 import "@/app/globals.css";
-import 'typeface-manrope';
 
+import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
