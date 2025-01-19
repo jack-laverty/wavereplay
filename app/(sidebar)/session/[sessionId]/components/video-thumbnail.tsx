@@ -1,6 +1,7 @@
 import React from 'react';
 import { VideoMetadata } from '@/lib/types';
 import { Button } from "@/components/ui/button";
+import { Video, Clapperboard, Film } from "lucide-react";
 
 interface VideoThumbnailProps {
   video: VideoMetadata;
@@ -16,7 +17,7 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ video, isSelected, onSe
     <Button
       variant={"outline"}
       className={`items-center rounded-xl justify-center p-0 min-w-36 md:w-44 h-24
-        ${isSelected ? "border-2" : ""}
+        ${isSelected ? "border-4 border-current" : ""}
       `}
       onClick={onSelect}
     >
@@ -32,6 +33,11 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ video, isSelected, onSe
           <source src={videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+        {isSelected && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <Film className="w-12 h-12 border-current drop-shadow-lg" />
+          </div>
+        )}
       </div>
     </Button>
   );
