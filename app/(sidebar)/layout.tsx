@@ -10,6 +10,7 @@ import Header from "./header"
 const manrope = Manrope({
   subsets: ['latin'],
   display: 'swap',
+  weight: "600"
 })
 
 export const metadata: Metadata = {

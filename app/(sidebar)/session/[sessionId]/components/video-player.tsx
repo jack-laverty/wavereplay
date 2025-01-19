@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { Play, Pause, Pencil, MessageSquarePlus } from "lucide-react";
+import { Play, Pause, StepBack, StepForward, Pencil, MessageSquarePlus } from "lucide-react";
 
 interface VideoPlayerProps {
   title: string;
@@ -72,6 +72,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
     }
   };
 
+  const stepBack = () => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      const fps = 30;
+      const frameDuration = 1 / fps;
+      videoElement.pause();
+      videoElement.currentTime = Math.max(0, videoElement.currentTime - frameDuration);
+      setCurrentTime([videoElement.currentTime]);
+    }
+  };
+  
+  const stepForward = () => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      const fps = 30;
+      const frameDuration = 1 / fps;
+      videoElement.pause();
+      videoElement.currentTime = Math.min(videoElement.duration, videoElement.currentTime + frameDuration);
+      setCurrentTime([videoElement.currentTime]);
+    }
+  };
+  
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       setCurrentTime([videoRef.current.currentTime, 0]);
@@ -93,7 +115,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
   
   const handlePlaybackRateChange = (newValue: number[]) => {
     setPlaybackRate(newValue);
-    console.error("test")
   };
 
   const formatTime = (time: number): string => {
@@ -103,7 +124,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
   };
 
   return (
-    <div className="bg-background flex flex-col gap-y-2">
+    <div className="bg-background flex flex-col">
       {error ? (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {error}
@@ -126,25 +147,50 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
         </>
       )}
 
-      <div className="flex flex-col p-4 rounded-b-lg">
-        <div className="flex items-center space-x-2">
-        <Button onClick={togglePlay} variant="ghost" size="icon">
-          {isPlaying ? <Pause size={32} /> : <Play size={32} />}
-        </Button>
-          <Slider
-            value={currentTime}
-            max={duration}
-            step={0.001}
-            onValueChange={handleSeek}
-            onValueCommit={handleSeek}
-            className="w-full"
-          />
-          <div className="text-sm">{formatTime(currentTime[0])}</div>
-        </div>
+      <div className="flex items-center space-x-2 mx-2">
+        <Slider
+          value={currentTime}
+          max={duration}
+          step={0.001}
+          onValueChange={handleSeek}
+          onValueCommit={handleSeek}
+          className="w-full"
+        />
+        <div className="text-sm">{formatTime(currentTime[0])}</div>
+      </div>
+      
+      <div className="flex flex-col rounded-b-lg">
 
-        {/* analysis tools */}
-        <div className="flex items-center justify-between">
-          <div className="space-x-2">
+        {/* playback controls */}
+
+        <div className="flex items-center justify-center">
+          
+          <Button
+            onClick={stepBack}
+            variant="ghost"
+            size="icon"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-600/90 focus:outline-none  dark:bg-gray-50 dark:hover:bg-gray-50/90">
+            <StepBack size={18} />
+          </Button>
+
+          <Button
+            onClick={togglePlay}
+            variant="ghost"
+            size="icon"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-300 transition-colors hover:bg-gray-600/90 focus:outline-none  dark:bg-gray-50 dark:hover:bg-gray-50/90">
+            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+          </Button>
+
+          <Button
+            onClick={stepForward}
+            variant="ghost"
+            size="icon"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-600/90 focus:outline-none  dark:bg-gray-50 dark:hover:bg-gray-50/90">
+            <StepForward size={18} />
+          </Button>
+
+
+          {/* <div className="space-x-2">
             <Button variant="ghost" size="icon">
               <Pencil />
             </Button>
@@ -152,10 +198,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
             <Button variant="ghost" size="icon">
               <MessageSquarePlus />
             </Button>
-          </div>
+          </div> */}
 
           {/* playback rate */}
-          <div className="flex-shrink-0 w-32">
+          {/* <div className="flex-shrink-0 w-32">
             <div className="flex items-center space-x-2">
               <Slider 
                 defaultValue={playbackRate}
@@ -165,7 +211,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
               />
               <div className="text-sm w-6 text-right">{playbackRate[0].toFixed(1)}x</div>
             </div>
-          </div>
+          </div> */}
 
         </div>
       </div>

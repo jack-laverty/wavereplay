@@ -23,7 +23,7 @@ export default async function Dashboard() {
   const data = await getSessions()
 
   return (
-    <div className="m-6">
+    <div className="bg-background m-4 p-4 rounded-lg">
       <DataTable columns={columns} data={data} />
     </div>
   )

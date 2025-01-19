@@ -74,6 +74,18 @@ In Supabase, under Authentication > URL Configuration:
 
 [Servers-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)
 
+Fetching resources through fastapi server:
+
+graph TD
+    A[Client Request] --> B{Has Authorization Header?}
+    B -->|No| C[HTTPBearer() raises 403 Forbidden]
+    B -->|Yes| D[Check if starts with "Bearer "]
+    D -->|No| C
+    D -->|Yes| E[Extract Token]
+    E --> F[Pass Token to get_supabase_client()]
+    F --> G[Create Supabase Client]
+    G --> H[Execute Route Function]
+
 
 sequenceDiagram
     participant U as User/Browser

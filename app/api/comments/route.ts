@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
   try {
+
+    const token = cookies().get('your_token_key')?.value;
 
     const { searchParams } = request.nextUrl;
     const videoId = searchParams.get('videoId');
 
     const response = await fetch(`${process.env.FASTAPI_SERVER_URL}/api/comments/${videoId}`, {
       method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     if (!response.ok) {

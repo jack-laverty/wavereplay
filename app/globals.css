@@ -4,8 +4,7 @@
 @tailwind utilities;
 
 :root {
-  /* --font: 'Manrope' */
-  --font: 'JetBrains Mono'
+  --font: 'Manrope'
 }
 
 @layer base {
