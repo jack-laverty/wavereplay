@@ -4,7 +4,18 @@ import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { Play, Pause, StepBack, StepForward, Pencil, MessageSquarePlus } from "lucide-react";
+import { 
+  Play,
+  Pause,
+  StepBack,
+  StepForward,
+  Timer
+} from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface VideoPlayerProps {
   title: string;
@@ -115,6 +126,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
   
   const handlePlaybackRateChange = (newValue: number[]) => {
     setPlaybackRate(newValue);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = newValue[0];
+    }
   };
 
   const formatTime = (time: number): string => {
@@ -189,29 +203,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
             <StepForward size={18} />
           </Button>
 
-
-          {/* <div className="space-x-2">
-            <Button variant="ghost" size="icon">
-              <Pencil />
-            </Button>
-
-            <Button variant="ghost" size="icon">
-              <MessageSquarePlus />
-            </Button>
-          </div> */}
-
-          {/* playback rate */}
-          {/* <div className="flex-shrink-0 w-32">
-            <div className="flex items-center space-x-2">
-              <Slider 
-                defaultValue={playbackRate}
-                max={1} 
-                step={0.01}
-                onValueChange={handlePlaybackRateChange}
-              />
-              <div className="text-sm w-6 text-right">{playbackRate[0].toFixed(1)}x</div>
-            </div>
-          </div> */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"ghost"}
+              >
+                <Timer size={18} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <div className="flex-shrink-0 w-32">
+                <div className="flex items-center space-x-2">
+                  <Slider 
+                    defaultValue={playbackRate}
+                    max={1} 
+                    step={0.01}
+                    onValueChange={handlePlaybackRateChange}
+                  />
+                  <div className="text-sm w-6 text-right">{playbackRate[0].toFixed(1)}x</div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
 
         </div>
       </div>

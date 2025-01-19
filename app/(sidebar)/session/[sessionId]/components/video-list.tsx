@@ -14,8 +14,8 @@ interface VideoListProps {
 const VideoList: React.FC<VideoListProps> = ({ videos, selectedVideo, onSelectVideo }) => {
   return (
 
-    <ScrollArea className="bg-background whitespace-nowrap">
-      <div className="p-2 space-x-2">
+    <ScrollArea className="bg-background rounded-lg">
+      <div className="p-4 gap-2 flex flex-col">
         {videos.map((video, index) => (
           <VideoThumbnail
             key={index}
@@ -25,7 +25,7 @@ const VideoList: React.FC<VideoListProps> = ({ videos, selectedVideo, onSelectVi
           />
         ))}
       </div>
-      <ScrollBar orientation="horizontal" />
+      <ScrollBar orientation="vertical" />
     </ScrollArea>
 
   );
