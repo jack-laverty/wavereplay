@@ -17,6 +17,7 @@ export default function VideoContainer({ clips, session }: VideoContainerProps) 
   
   const [comments, setComments] = useState<Comment[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<VideoMetadata | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { fetchComments, addComment } = useComments(
     setComments,
     selectedVideo?.id);
@@ -37,6 +38,7 @@ export default function VideoContainer({ clips, session }: VideoContainerProps) 
 
   const handleSelectVideo = (video: VideoMetadata) => {
     setSelectedVideo(video);
+    setIsPlaying(false);
   };
 
   return (
@@ -46,7 +48,11 @@ export default function VideoContainer({ clips, session }: VideoContainerProps) 
 
         <div className="flex flex-col rounded-xl max-w-screen-md pb-2 bg-background">
           <VideoHeader session={session} />
-          <VideoPlayer title={selectedVideo ? selectedVideo.title : ''} />
+          <VideoPlayer 
+            title={selectedVideo ? selectedVideo.title : ''}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+          />
         </div>
 
         <VideoList

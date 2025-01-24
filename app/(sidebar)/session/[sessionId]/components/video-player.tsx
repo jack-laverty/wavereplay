@@ -19,12 +19,14 @@ import {
 
 interface VideoPlayerProps {
   title: string;
+  isPlaying: boolean;
+  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ title }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ title, isPlaying, setIsPlaying }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string>('');
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number[]>([0]);
   const [duration, setDuration] = useState<number>(0);
   const [playbackRate, setPlaybackRate] = useState<number[]>([1]);
